@@ -2,7 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
-// Yahan wo keys aayengi jo Firebase Console se milengi
+// Aapki Config (Same to Same)
 const firebaseConfig = {
   apiKey: "AIzaSyAs-rI3t5qgRU8bbeJnYP5DO_tQ40KgNdg",
   authDomain: "hindsole-pharma.firebaseapp.com",
@@ -18,5 +18,7 @@ const app = initializeApp(firebaseConfig);
 
 // Export Services
 export const auth = getAuth(app);
-export const googleProvider = new GoogleAuthProvider();
 export const db = getFirestore(app);
+
+// ✅ FIX: Naam badal kar 'provider' kar diya taaki Header.tsx ko mil jaye
+export const provider = new GoogleAuthProvider();

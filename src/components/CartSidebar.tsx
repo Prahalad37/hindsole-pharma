@@ -1,7 +1,7 @@
-import { useState } from 'react'; // 1. useState Import kiya
+import { useState } from 'react';
 import { X, Plus, Minus, Trash2, ShoppingBag } from 'lucide-react';
 import { useShop } from '../context/ShopContext';
-import { CheckoutModal } from './CheckoutModal'; // 2. Modal Import kiya
+import { CheckoutModal } from './CheckoutModal'; // Yeh abhi hum banayenge
 
 interface CartSidebarProps {
   isOpen: boolean;
@@ -9,14 +9,19 @@ interface CartSidebarProps {
 }
 
 export const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
-  const { cart, removeFromCart, addToCart, decreaseItem, cartTotal } = useShop();
+  // 👇 FIX: 'decreaseItem' hata kar 'updateQuantity' use kiya
+  const { cart, removeFromCart, addToCart, updateQuantity, cartTotal } = useShop();
   
-  // 3. State banayi taaki pata chale Checkout form dikhana hai ya nahi
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+
+  // Helper to decrease quantity
+  const handleDecrease = (id: string, currentQty: number) => {
+    updateQuantity(id, currentQty - 1);
+  };
 
   return (
     <>
-      {/* 4. Agar state true hai, toh Checkout Modal dikhao */}
+      {/* Checkout Modal */}
       {isCheckoutOpen && <CheckoutModal onClose={() => setIsCheckoutOpen(false)} />}
 
       {/* Backdrop */}
@@ -54,7 +59,8 @@ export const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
                             
                             <div className="flex items-center gap-4 mt-2">
                                 <div className="flex items-center gap-3 bg-gray-100 rounded-lg px-2 py-1">
-                                    <button onClick={() => decreaseItem(item.id)} className="p-1 hover:text-red-500"><Minus size={14}/></button>
+                                    {/* 👇 Logic Fixed */}
+                                    <button onClick={() => handleDecrease(item.id, item.quantity)} className="p-1 hover:text-red-500"><Minus size={14}/></button>
                                     <span className="font-bold text-sm w-4 text-center">{item.quantity}</span>
                                     <button onClick={() => addToCart(item)} className="p-1 hover:text-emerald-600"><Plus size={14}/></button>
                                 </div>
@@ -74,7 +80,6 @@ export const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
                     <span>₹{cartTotal}</span>
                 </div>
                 
-                {/* 5. Button ab Checkout Modal open karega */}
                 <button 
                   onClick={() => setIsCheckoutOpen(true)}
                   className="w-full bg-emerald-600 text-white py-4 rounded-xl font-bold hover:bg-emerald-700 active:scale-95 transition-all shadow-lg shadow-emerald-200"

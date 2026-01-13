@@ -1,95 +1,91 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
-import { auth, googleProvider } from '../firebase';
-import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import type { Product, CartItem } from '../models';
+import { db, auth } from '../firebase'; // ✅ auth import kiya
+import { collection, getDocs } from 'firebase/firestore';
+import toast from 'react-hot-toast';
 
 interface ShopContextType {
-  cart: any[];
-  addToCart: (product: any) => void;
-  decreaseItem: (productId: number) => void;
-  removeFromCart: (productId: number) => void;
+  products: Product[];
+  cart: CartItem[];
+  addToCart: (product: Product) => void;
+  removeFromCart: (productId: string) => void;
+  updateQuantity: (productId: string, quantity: number) => void;
   cartTotal: number;
-  searchQuery: string;
+  clearCart: () => void;
+  user: any; 
   setSearchQuery: (query: string) => void;
-  user: any;
-  login: () => void;
-  logout: () => void;
-  clearCart: () => void; // Naya function: Order ke baad cart saaf karne ke liye
+  searchQuery: string;
 }
 
 const ShopContext = createContext<ShopContextType | undefined>(undefined);
 
 export const ShopProvider = ({ children }: { children: ReactNode }) => {
-  // 1. CHANGE: Shuru mein LocalStorage check karo
-  const [cart, setCart] = useState<any[]>(() => {
-    const savedCart = localStorage.getItem("hindsole_cart");
+  const [products, setProducts] = useState<Product[]>([]);
+  const [cart, setCart] = useState<CartItem[]>(() => {
+    const savedCart = localStorage.getItem('cart');
     return savedCart ? JSON.parse(savedCart) : [];
   });
-  
   const [searchQuery, setSearchQuery] = useState("");
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<any>(null); // ✅ Null se initialize kiya
 
-  // 2. CHANGE: Jab bhi Cart badle, use LocalStorage mein save kar do
+  // 🔐 Firebase User Listener: Isse Username sync hoga
   useEffect(() => {
-    localStorage.setItem("hindsole_cart", JSON.stringify(cart));
-  }, [cart]);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
+    const unsubscribe = auth.onAuthStateChanged((firebaseUser) => {
+      setUser(firebaseUser);
     });
     return () => unsubscribe();
   }, []);
 
-  const login = async () => {
-    try {
-      await signInWithPopup(auth, googleProvider);
-    } catch (error) {
-      console.error("Login failed:", error);
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'products'));
+        setProducts(querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Product[]);
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+    fetchProducts();
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('cart', JSON.stringify(cart));
+  }, [cart]);
+
+  const addToCart = (product: Product) => {
+    const existingItem = cart.find(item => item.id === product.id);
+    if (existingItem) {
+        toast.success(`Increased ${product.name} quantity!`);
+    } else {
+        toast.success(`${product.name} added to cart! 🛒`);
     }
-  };
-
-  const logout = () => {
-    signOut(auth);
-    alert("You have been logged out!");
-  };
-
-  const addToCart = (product: any) => {
-    setCart(current => {
-      const existing = current.find(item => item.id === product.id);
+    setCart(currentCart => {
+      const existing = currentCart.find(item => item.id === product.id);
       if (existing) {
-        return current.map(item =>
-          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
-        );
+        return currentCart.map(item => item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item);
       }
-      return [...current, { ...product, quantity: 1 }];
+      return [...currentCart, { ...product, quantity: 1 }];
     });
   };
 
-  const decreaseItem = (productId: number) => {
-    setCart(current => {
-      const existing = current.find(item => item.id === productId);
-      if (existing && existing.quantity > 1) {
-        return current.map(item =>
-          item.id === productId ? { ...item, quantity: item.quantity - 1 } : item
-        );
-      }
-      return current.filter(item => item.id !== productId);
-    });
+  const removeFromCart = (productId: string) => {
+    setCart(currentCart => currentCart.filter(item => item.id !== productId));
+    toast.error("Item removed");
   };
 
-  const removeFromCart = (productId: number) => {
-    setCart(current => current.filter(item => item.id !== productId));
+  const updateQuantity = (productId: string, quantity: number) => {
+    if (quantity < 1) { removeFromCart(productId); return; }
+    setCart(currentCart => currentCart.map(item => item.id === productId ? { ...item, quantity } : item));
   };
 
-  // Naya Function: Order successful hone par ise call karenge
-  const clearCart = () => {
-    setCart([]);
-  };
-
+  const clearCart = () => { setCart([]); toast("Cart cleared", { icon: '🧹' }); };
   const cartTotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
 
   return (
-    <ShopContext.Provider value={{ cart, addToCart, decreaseItem, removeFromCart, clearCart, cartTotal, searchQuery, setSearchQuery, user, login, logout }}>
+    <ShopContext.Provider value={{ 
+      products, cart, addToCart, removeFromCart, updateQuantity, cartTotal, clearCart, 
+      user, setSearchQuery, searchQuery 
+    }}>
       {children}
     </ShopContext.Provider>
   );
@@ -97,6 +93,6 @@ export const ShopProvider = ({ children }: { children: ReactNode }) => {
 
 export const useShop = () => {
   const context = useContext(ShopContext);
-  if (context === undefined) throw new Error('useShop must be used within a ShopProvider');
+  if (context === undefined) throw new Error('useShop error');
   return context;
 };
