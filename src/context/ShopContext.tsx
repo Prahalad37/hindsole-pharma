@@ -1,59 +1,95 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
-import { products } from '../data/products';
-
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  category: string;
-  image: string;
-  rating: number;
-  reviews: number;
-}
-
-interface CartItem {
-  product: Product;
-  quantity: number;
-}
+import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import { auth, googleProvider } from '../firebase';
+import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
 
 interface ShopContextType {
-  cartItems: CartItem[];
-  setCartItems: React.Dispatch<React.SetStateAction<CartItem[]>>; // Added this
-  addToCart: (product: Product) => void;
+  cart: any[];
+  addToCart: (product: any) => void;
+  decreaseItem: (productId: number) => void;
   removeFromCart: (productId: number) => void;
   cartTotal: number;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
-  isCartOpen: boolean;
-  setIsCartOpen: (isOpen: boolean) => void;
+  user: any;
+  login: () => void;
+  logout: () => void;
+  clearCart: () => void; // Naya function: Order ke baad cart saaf karne ke liye
 }
 
 const ShopContext = createContext<ShopContextType | undefined>(undefined);
 
 export const ShopProvider = ({ children }: { children: ReactNode }) => {
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  // 1. CHANGE: Shuru mein LocalStorage check karo
+  const [cart, setCart] = useState<any[]>(() => {
+    const savedCart = localStorage.getItem("hindsole_cart");
+    return savedCart ? JSON.parse(savedCart) : [];
+  });
+  
   const [searchQuery, setSearchQuery] = useState("");
-  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
 
-  const addToCart = (product: Product) => {
-    setCartItems(prev => {
-      const existing = prev.find(item => item.product.id === product.id);
-      if (existing) {
-        return prev.map(item => item.product.id === product.id ? { ...item, quantity: item.quantity + 1 } : item);
-      }
-      return [...prev, { product, quantity: 1 }];
+  // 2. CHANGE: Jab bhi Cart badle, use LocalStorage mein save kar do
+  useEffect(() => {
+    localStorage.setItem("hindsole_cart", JSON.stringify(cart));
+  }, [cart]);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
     });
-    setIsCartOpen(true);
+    return () => unsubscribe();
+  }, []);
+
+  const login = async () => {
+    try {
+      await signInWithPopup(auth, googleProvider);
+    } catch (error) {
+      console.error("Login failed:", error);
+    }
+  };
+
+  const logout = () => {
+    signOut(auth);
+    alert("You have been logged out!");
+  };
+
+  const addToCart = (product: any) => {
+    setCart(current => {
+      const existing = current.find(item => item.id === product.id);
+      if (existing) {
+        return current.map(item =>
+          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+        );
+      }
+      return [...current, { ...product, quantity: 1 }];
+    });
+  };
+
+  const decreaseItem = (productId: number) => {
+    setCart(current => {
+      const existing = current.find(item => item.id === productId);
+      if (existing && existing.quantity > 1) {
+        return current.map(item =>
+          item.id === productId ? { ...item, quantity: item.quantity - 1 } : item
+        );
+      }
+      return current.filter(item => item.id !== productId);
+    });
   };
 
   const removeFromCart = (productId: number) => {
-    setCartItems(prev => prev.filter(item => item.product.id !== productId));
+    setCart(current => current.filter(item => item.id !== productId));
   };
 
-  const cartTotal = cartItems.reduce((acc, item) => acc + (item.product.price * item.quantity), 0);
+  // Naya Function: Order successful hone par ise call karenge
+  const clearCart = () => {
+    setCart([]);
+  };
+
+  const cartTotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
 
   return (
-    <ShopContext.Provider value={{ cartItems, setCartItems, addToCart, removeFromCart, cartTotal, searchQuery, setSearchQuery, isCartOpen, setIsCartOpen }}>
+    <ShopContext.Provider value={{ cart, addToCart, decreaseItem, removeFromCart, clearCart, cartTotal, searchQuery, setSearchQuery, user, login, logout }}>
       {children}
     </ShopContext.Provider>
   );
@@ -61,6 +97,6 @@ export const ShopProvider = ({ children }: { children: ReactNode }) => {
 
 export const useShop = () => {
   const context = useContext(ShopContext);
-  if (!context) throw new Error("useShop must be used within a ShopProvider");
+  if (context === undefined) throw new Error('useShop must be used within a ShopProvider');
   return context;
 };
