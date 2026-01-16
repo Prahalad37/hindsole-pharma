@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Leaf, Facebook, Instagram, Twitter, Mail } from 'lucide-react';
+import { Facebook, Instagram, Twitter, Mail } from 'lucide-react'; // Leaf hata diya
 import { Link } from 'react-router-dom';
 import { db } from '../firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
@@ -16,7 +16,6 @@ export const Footer = () => {
 
     setLoading(true);
     try {
-      // ✅ Saves to 'subscribers' collection in Firebase
       await addDoc(collection(db, "subscribers"), {
         email: email,
         subscribedAt: serverTimestamp()
@@ -37,14 +36,20 @@ export const Footer = () => {
           
           {/* Column 1: Brand & Socials */}
           <div className="space-y-6">
-            <div className="flex items-center gap-2">
-                <Leaf className="text-emerald-400" size={24} />
-                <span className="text-3xl font-black tracking-tighter text-white">HINDSOLE</span>
+            <div className="flex items-center gap-3">
+                {/* ✅ LOGO CHANGE HERE */}
+                <img 
+                  src="/products/logo2.jpeg" 
+                  alt="Ayurvita Logo" 
+                  className="h-12 w-auto object-contain rounded-lg" // Rounded corners agar white background ho to acha lagega
+                />
+                <span className="text-3xl font-black tracking-tighter text-white">AYURVITA</span>
             </div>
             <p className="opacity-70 text-sm leading-relaxed max-w-xs">
               Ancient Ayurvedic wisdom meets modern science. Purity sourced directly from the Himalayas.
             </p>
-            {/* ✅ Active Social Links */}
+            
+            {/* Active Social Links */}
             <div className="flex gap-4 pt-4">
                 <a href="https://instagram.com/hindsole" target="_blank" rel="noreferrer" className="bg-emerald-900 p-2 rounded-full hover:bg-emerald-800 transition-colors">
                     <Instagram size={20}/>
@@ -103,10 +108,10 @@ export const Footer = () => {
           </div>
         </div>
 
-        {/* Bottom Bar */}
+        {/* Bottom Bar - Copyright Update */}
         <div className="border-t border-emerald-900 pt-8 text-center px-4">
             <p className="text-[10px] md:text-xs opacity-40 font-bold tracking-widest uppercase">
-                © 2026 Hindsole Pharma. All rights reserved. Crafted with <span className="text-red-500">❤</span> in India.
+                © 2026 Ayurvita Pharma. All rights reserved. Crafted with <span className="text-red-500">❤</span> in India.
             </p>
         </div>
     </footer>

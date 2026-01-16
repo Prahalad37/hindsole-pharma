@@ -1,102 +1,124 @@
-import { Leaf, Award, Heart, Mountain } from 'lucide-react';
+import { Leaf, Award, Heart, Mountain, Quote, ShieldCheck } from 'lucide-react';
 
 export const Story = () => {
   return (
-    <div className="min-h-screen bg-white animate-in fade-in">
+    <div className="min-h-screen bg-stone-50 animate-in fade-in">
       
-      {/* Hero Section */}
+      {/* 🌿 Hero Section */}
       <div className="relative h-[500px] flex items-center justify-center text-center px-4">
         <div className="absolute inset-0">
+            {/* Background Image */}
             <img 
-                src="https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?auto=format&fit=crop&q=80&w=1600" 
-                alt="Himalayas" 
-                className="w-full h-full object-cover"
+                src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=2070&auto=format&fit=crop" 
+                alt="Himalayas & Herbs" 
+                className="w-full h-full object-cover brightness-[0.4]"
             />
-            <div className="absolute inset-0 bg-emerald-900/60 mix-blend-multiply"></div>
+            <div className="absolute inset-0 bg-emerald-900/40 mix-blend-multiply"></div>
         </div>
         <div className="relative z-10 max-w-4xl mx-auto text-white space-y-6">
-            <span className="text-emerald-300 font-bold tracking-[0.2em] uppercase text-sm">Since 2026</span>
-            <h1 className="text-5xl md:text-7xl font-black tracking-tight">Rooted in Nature,<br/>Backed by Science.</h1>
-            <p className="text-lg md:text-xl text-emerald-100 max-w-2xl mx-auto leading-relaxed">
-                Hindsole Pharma isn't just a brand; it's a promise to bring the ancient healing secrets of the Himalayas to your doorstep.
+            <span className="text-emerald-300 font-bold tracking-[0.2em] uppercase text-sm">Est. 2026</span>
+            <h1 className="text-5xl md:text-7xl font-black tracking-tight font-serif">
+              Rooted in Trust, <br/>
+              <span className="text-emerald-400">Healed by Nature.</span>
+            </h1>
+            <p className="text-lg md:text-xl text-emerald-100 max-w-2xl mx-auto leading-relaxed font-light">
+                The journey of how <b>Sumit Pal</b> turned ancient Himalayan wisdom into a modern cure for millions.
             </p>
         </div>
       </div>
 
-      {/* Values Grid */}
+      {/* 🏔️ Values Grid with Product Mentions */}
       <div className="max-w-7xl mx-auto px-6 py-24">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold text-emerald-950 font-serif">Why Ayurvita is Different</h2>
+          <p className="text-gray-500 mt-4">We don't just sell medicines; we deliver purity.</p>
+        </div>
+
         <div className="grid md:grid-cols-3 gap-12 text-center">
-            <div className="space-y-4 px-4">
+            {/* Value 1 */}
+            <div className="space-y-4 px-4 p-6 rounded-2xl hover:bg-white hover:shadow-xl transition-all duration-300">
                 <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
                     <Mountain size={32}/>
                 </div>
-                <h3 className="text-xl font-black text-gray-900">Sourced from Himalayas</h3>
-                <p className="text-gray-500 leading-relaxed">
-                    We don't buy from middlemen. Our herbs are hand-picked by local farmers in the upper ranges of Uttarakhand.
+                <h3 className="text-xl font-black text-gray-900">Himalayan Herbs</h3>
+                <p className="text-gray-600 leading-relaxed">
+                    The herbs used in <b>Dr. Arthovita</b> and <b>Gasovita</b> are sourced directly from the upper ranges of Uttarakhand, ensuring 100% potency.
                 </p>
             </div>
-            <div className="space-y-4 px-4">
+
+            {/* Value 2 */}
+            <div className="space-y-4 px-4 p-6 rounded-2xl hover:bg-white hover:shadow-xl transition-all duration-300">
                 <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
                     <Leaf size={32}/>
                 </div>
-                <h3 className="text-xl font-black text-gray-900">100% Organic & Pure</h3>
-                <p className="text-gray-500 leading-relaxed">
-                    No fillers, no steroids, no chemicals. Just pure plant extracts processed using traditional Ayurvedic methods.
+                <h3 className="text-xl font-black text-gray-900">No Harmful Chemicals</h3>
+                <p className="text-gray-600 leading-relaxed">
+                    Unlike modern pills, our products like <b>Dr. Gynevita</b> contain no steroids or synthetic fillers. Pure, safe, and effective.
                 </p>
             </div>
-            <div className="space-y-4 px-4">
+
+            {/* Value 3 */}
+            <div className="space-y-4 px-4 p-6 rounded-2xl hover:bg-white hover:shadow-xl transition-all duration-300">
                 <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <Award size={32}/>
+                    <ShieldCheck size={32}/>
                 </div>
-                <h3 className="text-xl font-black text-gray-900">GMP Certified</h3>
-                <p className="text-gray-500 leading-relaxed">
-                    While our wisdom is ancient, our labs are modern. Every batch is tested for safety and potency.
+                <h3 className="text-xl font-black text-gray-900">Ancient Formula, Modern Lab</h3>
+                <p className="text-gray-600 leading-relaxed">
+                    We follow the exact texts of Ayurveda but test every batch of <b>Dr. Diabvita</b> in GMP-certified labs for safety.
                 </p>
             </div>
         </div>
       </div>
 
-      {/* The Founder's Note */}
-      <div className="bg-emerald-50 py-24 px-6">
-        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-16">
+      {/* ✍️ The Founder's Note (Sumit Pal) */}
+      <div className="bg-emerald-900 py-24 px-6 text-white relative overflow-hidden">
+        {/* Decorative elements */}
+        <div className="absolute top-0 right-0 p-20 opacity-5">
+            <Quote size={400} />
+        </div>
+
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-16 relative z-10">
             <div className="w-full md:w-1/2 relative">
-                <div className="absolute -top-4 -left-4 w-full h-full border-2 border-emerald-200 rounded-3xl"></div>
+                <div className="absolute -top-4 -left-4 w-full h-full border-2 border-emerald-500/30 rounded-3xl"></div>
                 <img 
                     src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&q=80&w=800" 
-                    alt="Founder" 
-                    className="rounded-3xl shadow-2xl relative z-10 w-full h-[500px] object-cover"
+                    alt="Sumit Pal - Founder" 
+                    className="rounded-3xl shadow-2xl relative z-10 w-full h-[500px] object-cover filter brightness-90"
                 />
             </div>
+            
             <div className="w-full md:w-1/2 space-y-8">
-                <h2 className="text-4xl font-black text-emerald-900">A Message from the Founder</h2>
-                <div className="space-y-6 text-gray-600 text-lg leading-relaxed">
+                <div className="inline-block bg-emerald-800 px-4 py-1 rounded-full text-emerald-300 text-sm font-bold tracking-wider uppercase">
+                    Founder's Message
+                </div>
+                <h2 className="text-4xl md:text-5xl font-black text-white font-serif leading-tight">
+                    "Health shouldn't come with side effects."
+                </h2>
+                <div className="space-y-6 text-emerald-100 text-lg leading-relaxed font-light">
                     <p>
-                        "I started Hindsole with a simple question: <span className="text-emerald-700 font-bold italic">Why are we forgetting our roots?</span>"
+                        "I started <b>Ayurvita Pharma</b> with a simple observation. I saw people popping painkillers for joint pain and antacids for gas every single day. They were treating the symptoms, not the root cause."
                     </p>
                     <p>
-                        Growing up, I saw my grandmother cure complex ailments with simple kitchen herbs. But as I entered the corporate world, I saw people popping pills for every small headache.
-                    </p>
-                    <p>
-                        We wanted to bridge this gap. To create medicines that work effectively without the side effects of modern chemicals.
+                        "I wanted to change that. With <b>Dr. Arthovita</b> and <b>Dr. Gasovita</b>, we are bringing back the power of Indian roots. My promise is simple: authentic Ayurveda that actually works."
                     </p>
                 </div>
-                <div className="pt-4 border-t border-emerald-200">
-                    <p className="font-black text-xl text-emerald-900">Prahalad Pal</p>
-                    <p className="text-emerald-600">Founder & CEO, Hindsole Pharma</p>
+                <div className="pt-6 border-t border-emerald-700/50">
+                    <p className="font-black text-2xl text-white">Sumit Pal</p>
+                    <p className="text-emerald-400 font-medium">Founder & CEO, Ayurvita Pharma</p>
                 </div>
             </div>
         </div>
       </div>
 
-      {/* Bottom CTA */}
-      <div className="bg-emerald-900 text-white py-24 text-center px-4">
-        <Heart size={48} className="mx-auto mb-6 text-emerald-400 animate-pulse"/>
-        <h2 className="text-4xl font-black mb-6">Join the Ayurveda Revolution</h2>
-        <p className="text-emerald-200 text-lg max-w-2xl mx-auto mb-10">
-            Start your journey towards a chemical-free, healthier life today.
+      {/* ❤️ Bottom CTA */}
+      <div className="bg-white py-24 text-center px-4">
+        <Heart size={48} className="mx-auto mb-6 text-emerald-600 animate-pulse"/>
+        <h2 className="text-4xl font-black mb-6 text-emerald-950 font-serif">Join the Ayurveda Revolution</h2>
+        <p className="text-gray-500 text-lg max-w-2xl mx-auto mb-10">
+            Start your journey towards a chemical-free, healthier life with Sumit Pal's vision.
         </p>
-        <a href="/" className="inline-block bg-white text-emerald-900 px-8 py-4 rounded-full font-bold hover:bg-emerald-50 transition-colors shadow-lg shadow-emerald-900/50">
-            Explore Our Products
+        <a href="/shop" className="inline-block bg-emerald-600 text-white px-10 py-4 rounded-xl font-bold hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-200 hover:scale-105">
+            Explore Our Medicines
         </a>
       </div>
 

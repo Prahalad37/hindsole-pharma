@@ -7,7 +7,7 @@ import { ShopProvider } from './context/ShopContext';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { CartSidebar } from './components/CartSidebar';
-import { FloatingNav } from './components/FloatingNav'; // ✅ Import check
+import { FloatingNav } from './components/FloatingNav'; 
 
 // Pages
 import { Home } from './pages/Home'; 
@@ -19,6 +19,8 @@ import { Story } from './pages/Story';
 import { Admin } from './pages/Admin';
 import { Policy } from './pages/Policy';
 import { MyOrders } from './pages/MyOrders'; 
+// 👇 NEW IMPORT: Checkout page yahan add kiya
+import { Checkout } from './pages/Checkout';
 
 function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -50,6 +52,9 @@ function App() {
               <Route path="/blog/:id" element={<BlogPost />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="/policy/:type" element={<Policy />} />
+              
+              {/* 👇 NEW ROUTE: Checkout page ka rasta */}
+              <Route path="/checkout" element={<Checkout />} />
             </Routes>
           </main>
 

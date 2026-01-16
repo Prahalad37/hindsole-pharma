@@ -7,7 +7,7 @@ import { signInWithPopup, signOut } from 'firebase/auth';
 import toast from 'react-hot-toast';
 
 export const Header = ({ onCartClick }: { onCartClick: () => void }) => {
-  const { cart, setSearchQuery, user } = useShop(); // ✅ user context se aa raha hai
+  const { cart, setSearchQuery, user } = useShop(); 
   const [showDropdown, setShowDropdown] = useState(false);
   const navigate = useNavigate();
 
@@ -33,11 +33,15 @@ export const Header = ({ onCartClick }: { onCartClick: () => void }) => {
 
   return (
     <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-emerald-100 font-sans">
-      <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
         
-        <Link to="/" className="flex items-center gap-2 group">
-          <div className="bg-emerald-600 text-white p-2 rounded-lg font-bold text-xl">H</div>
-          <span className="text-2xl font-black tracking-tighter text-emerald-950">HINDSOLE</span>
+        {/* ✅ LOGO UPDATE: Ab ye image use karega */}
+        <Link to="/" className="flex items-center gap-2">
+          <img 
+            src="/products/logo2.jpeg" 
+            alt="Ayurvita Pharma" 
+            className="h-12 w-auto object-contain" // Height set ki hai taaki navbar na bigde
+          />
         </Link>
 
         <nav className="hidden md:flex items-center gap-8 font-bold text-sm text-gray-500">
@@ -53,7 +57,7 @@ export const Header = ({ onCartClick }: { onCartClick: () => void }) => {
             <input type="text" placeholder="Search..." onChange={(e) => setSearchQuery(e.target.value)} className="bg-transparent border-none outline-none text-sm ml-2 w-24 focus:w-40 transition-all" />
           </div>
 
-          {/* ✅ User Section Fix: Photo aur Name dikhayega */}
+          {/* User Profile Section */}
           {user ? (
             <div className="relative">
                 <button onClick={() => setShowDropdown(!showDropdown)} className="flex items-center gap-2 bg-emerald-50 pl-1 pr-3 py-1 rounded-full border border-emerald-100 hover:shadow-md transition-all">
@@ -65,7 +69,6 @@ export const Header = ({ onCartClick }: { onCartClick: () => void }) => {
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl py-2 border border-emerald-100 animate-in fade-in zoom-in duration-200">
                     <Link to="/my-orders" onClick={() => setShowDropdown(false)} className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-emerald-50"><Package size={16} className="mr-2"/> My Orders</Link>
                     
-                    {/* Admin Check: Gmail check fix kiya */}
                     {(user.email === "admin@hindsole.com" || user.email === "prahaladpal01@gmail.com") && (
                        <Link to="/admin" onClick={() => setShowDropdown(false)} className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-emerald-50"><ShieldCheck size={16} className="mr-2"/> Admin Panel</Link>
                     )}
@@ -75,7 +78,7 @@ export const Header = ({ onCartClick }: { onCartClick: () => void }) => {
                 )}
             </div>
           ) : (
-            <button onClick={handleLogin} className="bg-emerald-600 text-white px-5 py-2 rounded-full text-sm font-bold shadow-lg shadow-emerald-200">Login</button>
+            <button onClick={handleLogin} className="bg-emerald-600 text-white px-5 py-2 rounded-full text-sm font-bold shadow-lg shadow-emerald-200 hover:bg-emerald-700 transition-colors">Login</button>
           )}
 
           <button onClick={onCartClick} className="relative p-2 hover:bg-emerald-50 rounded-full group">
