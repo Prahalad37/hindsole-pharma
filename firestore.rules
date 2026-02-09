@@ -1,0 +1,72 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper functions
+    function isAdmin() {
+      // In a real production app, use Custom Claims. 
+      // For this transition, we'll allow specific UID or email checks if needed,
+      // but ideally we rely on a securely stored admin list or claims.
+      // For now, let's assume any authenticated user with a specific verified email is admin
+      // OR use a dedicated 'admins' collection check.
+      return request.auth != null && (
+        request.auth.token.email == "admin@hindsole.com" || 
+        request.auth.uid == "N10HJz2hWabEhzckpHQW4AnOlJb2" ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+
+    // Products: Public Read, Admin Write
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Blogs: Public Read, Admin Write
+    match /blogs/{blogId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Orders: Owner Read/Create, Admin Read/Update
+    match /orders/{orderId} {
+      allow create: if request.auth != null;
+      allow read: if isOwner(resource.data.userId) || isAdmin();
+      allow update: if isAdmin(); // Only admin can update status
+    }
+
+    // Appointments: Public Create (Guest), Owner/Admin Read
+    match /appointments/{apptId} {
+      allow create: if true; // Guests can book
+      allow read: if (request.auth != null && resource.data.userId == request.auth.uid) || isAdmin();
+      allow update: if isAdmin();
+    }
+
+    // Reviews: Public Read, Owner Create
+    match /reviews/{reviewId} {
+      allow read: if true;
+      allow create: if request.auth != null;
+    }
+    
+    // User Carts (New): Owner Only
+    match /carts/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // User Profiles (New): Owner Read/Write, Admin Read
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+      allow read: if isAdmin();
+    }
+    
+    // Subscribers: Public Create
+    match /subscribers/{subId} {
+      allow create: if true;
+      allow read: if isAdmin();
+    }
+  }
+}

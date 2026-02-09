@@ -1,0 +1,71 @@
+.announcement-bar {
+  /* Premium emerald gradient with depth */
+  background: linear-gradient(135deg,
+      #059669 0%,
+      #10b981 25%,
+      #047857 50%,
+      #065f46 75%,
+      #064e3b 100%);
+  color: white;
+  /* Thinner bar - reduced from 0.75rem to 0.5rem */
+  padding: 0.5rem 0;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.3);
+}
+
+.announcement-content {
+  display: flex;
+  white-space: nowrap;
+  /* Faster animation - reduced from 30s to 15s */
+  animation: scroll 15s linear infinite;
+}
+
+.announcement-item {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 2rem;
+}
+
+.announcement-separator {
+  margin-left: 2rem;
+  font-size: 0.6rem;
+  opacity: 0.8;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .announcement-bar {
+    font-size: 0.75rem;
+    /* Thinner on mobile too */
+    padding: 0.4rem 0;
+  }
+
+  .announcement-item {
+    padding: 0 1rem;
+  }
+
+  .announcement-separator {
+    margin-left: 1rem;
+  }
+
+  .announcement-content {
+    /* Even faster on mobile for better visibility */
+    animation: scroll 12s linear infinite;
+  }
+}

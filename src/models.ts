@@ -32,5 +32,6 @@ export interface Review {
   userName: string;
   rating: number;
   comment: string;
-  createdAt: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  createdAt: { seconds: number } | Date | any;
 }

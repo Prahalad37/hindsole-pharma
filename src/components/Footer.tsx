@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Facebook, Instagram, Twitter, Mail } from 'lucide-react'; // Leaf hata diya
+import { Facebook, Instagram, Youtube, ArrowUp } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { db } from '../firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
@@ -9,7 +9,6 @@ export const Footer = () => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // 📧 Newsletter Logic (Active)
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
@@ -20,100 +19,144 @@ export const Footer = () => {
         email: email,
         subscribedAt: serverTimestamp()
       });
-      toast.success("Subscribed! Wellness tips are on the way. 🌿");
+      toast.success("Subscribed to the tribe! 🌿");
       setEmail('');
     } catch (error) {
       console.error(error);
-      toast.error("Failed to subscribe. Please try again.");
+      toast.error("Subscription failed. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
-    <footer className="bg-emerald-950 text-emerald-50 py-16 mt-auto border-t border-emerald-900">
-        <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-8 mb-16">
-          
-          {/* Column 1: Brand & Socials */}
-          <div className="space-y-6">
-            <div className="flex items-center gap-3">
-                {/* ✅ LOGO CHANGE HERE */}
-                <img 
-                  src="/products/logo2.jpeg" 
-                  alt="Ayurvita Logo" 
-                  className="h-12 w-auto object-contain rounded-lg" // Rounded corners agar white background ho to acha lagega
+    <footer className="bg-[#024E32] text-white pt-16 pb-6 font-sans border-t border-emerald-900/30 relative">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+
+        {/* TOP ROW: Logo & Socials */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 border-b border-emerald-800 pb-12 mb-12">
+          <div className="max-w-md">
+            <Link to="/" className="flex items-center gap-3 mb-4 group">
+              <div className="bg-white/10 p-2 rounded-full backdrop-blur-sm">
+                <img
+                  src="/logo.svg"
+                  alt="Logo"
+                  className="h-10 w-10 object-contain brightness-0 invert"
                 />
-                <span className="text-3xl font-black tracking-tighter text-white">AYURVITA</span>
-            </div>
-            <p className="opacity-70 text-sm leading-relaxed max-w-xs">
-              Ancient Ayurvedic wisdom meets modern science. Purity sourced directly from the Himalayas.
+              </div>
+              <div>
+                <h2 className="font-black text-xl tracking-wide uppercase leading-none">HINDSole</h2>
+                <p className="text-[10px] tracking-[0.2em] opacity-80 uppercase">New Age Ayurved</p>
+              </div>
+            </Link>
+            <p className="text-sm text-emerald-100/70 leading-relaxed">
+              Hindsole is an online Ayurvedic store that brings traditional Indian Ayurved to modern consumers. With 150 years of heritage, the formulations have treated thousands of patients.
             </p>
-            
-            {/* Active Social Links */}
-            <div className="flex gap-4 pt-4">
-                <a href="https://instagram.com/hindsole" target="_blank" rel="noreferrer" className="bg-emerald-900 p-2 rounded-full hover:bg-emerald-800 transition-colors">
-                    <Instagram size={20}/>
-                </a>
-                <a href="https://facebook.com/hindsole" target="_blank" rel="noreferrer" className="bg-emerald-900 p-2 rounded-full hover:bg-emerald-800 transition-colors">
-                    <Facebook size={20}/>
-                </a>
-                <a href="https://twitter.com/hindsole" target="_blank" rel="noreferrer" className="bg-emerald-900 p-2 rounded-full hover:bg-emerald-800 transition-colors">
-                    <Twitter size={20}/>
-                </a>
+          </div>
+
+          <div className="flex flex-col items-start md:items-end gap-3">
+            <span className="text-[10px] font-bold tracking-[0.2em] uppercase opacity-60">Social</span>
+            <div className="flex gap-4">
+              <a href="#" className="hover:text-amber-400 transition-colors"><Facebook size={20} /></a>
+              <a href="#" className="hover:text-amber-400 transition-colors"><Instagram size={20} /></a>
+              <a href="#" className="hover:text-amber-400 transition-colors"><Youtube size={20} /></a>
             </div>
           </div>
+        </div>
 
-          {/* Column 2: Quick Links */}
-          <div>
-            <h4 className="text-white font-bold mb-6 uppercase tracking-wider">Quick Links</h4>
-            <ul className="space-y-4 font-medium opacity-80">
-                <li><Link to="/shop" className="hover:text-emerald-400 transition-colors">Shop All</Link></li>
-                <li><Link to="/consult" className="hover:text-emerald-400 transition-colors">Doctor Consultation</Link></li>
-                <li><Link to="/story" className="hover:text-emerald-400 transition-colors">Our Story</Link></li>
-                <li><Link to="/blogs" className="hover:text-emerald-400 transition-colors">Wellness Journal</Link></li>
-            </ul>
-          </div>
+        {/* MAIN CONTENT: Newsletter (Left) + Links (Right) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 mb-16">
 
-          {/* Column 3: Support */}
-          <div>
-            <h4 className="text-white font-bold mb-6 uppercase tracking-wider">Support</h4>
-            <ul className="space-y-4 font-medium opacity-80">
-                <li><Link to="/policy/contact" className="hover:text-emerald-400 transition-colors">Contact Us</Link></li>
-                <li><Link to="/policy/shipping" className="hover:text-emerald-400 transition-colors">Shipping Policy</Link></li>
-                <li><Link to="/policy/returns" className="hover:text-emerald-400 transition-colors">Returns & Refunds</Link></li>
-                <li><Link to="/policy/faq" className="hover:text-emerald-400 transition-colors">FAQs</Link></li>
-            </ul>
-          </div>
-
-          {/* Column 4: Newsletter (Active Form) */}
-          <div>
-            <h4 className="text-white font-bold mb-6 uppercase tracking-wider">Stay Updated</h4>
-            <p className="opacity-70 text-sm mb-6">Subscribe to get special offers, free giveaways, and once-in-a-lifetime deals.</p>
-            <form onSubmit={handleSubscribe} className="flex gap-0 shadow-lg">
-                <input 
-                  required
-                  type="email" 
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email" 
-                  className="bg-emerald-900 text-white px-4 py-3 rounded-l-xl outline-none w-full focus:ring-2 ring-emerald-600 placeholder:text-emerald-700/50" 
-                />
-                <button 
-                  disabled={loading}
-                  className="bg-emerald-600 hover:bg-emerald-500 text-white px-4 rounded-r-xl transition-colors disabled:opacity-50"
-                >
-                  {loading ? <div className="animate-spin border-2 border-white border-t-transparent rounded-full w-5 h-5"/> : <Mail/>}
-                </button>
+          {/* Newsletter Section (Left - 4 cols) */}
+          <div className="lg:col-span-4 pr-0 lg:pr-12">
+            <h3 className="text-2xl font-serif font-medium mb-4">Sign-up for our newsletter</h3>
+            <p className="text-sm text-emerald-100/70 mb-6 leading-relaxed">
+              Find out all about our latest offers, new products, the science of Ayurved and a lot more in our newsletters!
+            </p>
+            <form onSubmit={handleSubscribe} className="relative max-w-sm">
+              <input
+                type="email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full bg-[#036040] border border-[#04754e] rounded-full px-5 py-3 text-sm focus:outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400 placeholder:text-emerald-300/50 transition-all"
+                required
+              />
+              <button
+                type="submit"
+                disabled={loading}
+                className="absolute right-1.5 top-1.5 bottom-1.5 bg-white text-[#024E32] px-6 rounded-full text-[10px] font-bold tracking-widest uppercase hover:bg-emerald-50 transition-colors disabled:opacity-70"
+              >
+                {loading ? '...' : 'SUBSCRIBE'}
+              </button>
             </form>
           </div>
+
+          {/* Links Grid (Right - 8 cols) */}
+          <div className="lg:col-span-8 grid grid-cols-2 md:grid-cols-4 gap-8">
+            <div>
+              <h4 className="text-[10px] font-bold tracking-[0.2em] uppercase mb-6 opacity-60">Shop</h4>
+              <ul className="space-y-3 text-xs md:text-sm text-emerald-100/80">
+                <li><Link to="/shop?category=Fitness" className="hover:text-white hover:translate-x-1 transition-all inline-block">Fitness</Link></li>
+                <li><Link to="/shop?category=Sexual%20Wellness" className="hover:text-white hover:translate-x-1 transition-all inline-block">Sexual Wellness</Link></li>
+                <li><Link to="/shop?category=Immunity" className="hover:text-white hover:translate-x-1 transition-all inline-block">Immunity And Wellness</Link></li>
+                <li><Link to="/shop?category=Womens%20Health" className="hover:text-white hover:translate-x-1 transition-all inline-block">Women's Health</Link></li>
+                <li><Link to="/shop?category=Piles%20Care" className="hover:text-white hover:translate-x-1 transition-all inline-block">Piles Care</Link></li>
+                <li><Link to="/shop?category=Liver" className="hover:text-white hover:translate-x-1 transition-all inline-block">Liver Care</Link></li>
+                <li><Link to="/shop?category=Diabetes" className="hover:text-white hover:translate-x-1 transition-all inline-block">Diabetes</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-[10px] font-bold tracking-[0.2em] uppercase mb-6 opacity-60">Help</h4>
+              <ul className="space-y-3 text-xs md:text-sm text-emerald-100/80">
+                <li><Link to="/policy/returns" className="hover:text-white hover:translate-x-1 transition-all inline-block">Refunds & Returns</Link></li>
+                <li><Link to="/my-orders" className="hover:text-white hover:translate-x-1 transition-all inline-block">Track Your Order</Link></li>
+                <li><Link to="/policy/faq" className="hover:text-white hover:translate-x-1 transition-all inline-block">FAQs</Link></li>
+                <li><Link to="/story" className="hover:text-white hover:translate-x-1 transition-all inline-block">About Us</Link></li>
+                <li><Link to="/policy/contact" className="hover:text-white hover:translate-x-1 transition-all inline-block">Contact Us</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-[10px] font-bold tracking-[0.2em] uppercase mb-6 opacity-60">Important Pages</h4>
+              <ul className="space-y-3 text-xs md:text-sm text-emerald-100/80">
+                <li><Link to="/my-orders" className="hover:text-white hover:translate-x-1 transition-all inline-block">Order Tracking</Link></li>
+                <li><Link to="/story" className="hover:text-white hover:translate-x-1 transition-all inline-block">Our Story</Link></li>
+                <li><Link to="/partner" className="hover:text-white hover:translate-x-1 transition-all inline-block">Partner</Link></li>
+                <li><Link to="/manufacturing" className="hover:text-white hover:translate-x-1 transition-all inline-block">Contract Manufacturing</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-[10px] font-bold tracking-[0.2em] uppercase mb-6 opacity-60">General</h4>
+              <ul className="space-y-3 text-xs md:text-sm text-emerald-100/80">
+                <li><Link to="/policy/terms" className="hover:text-white hover:translate-x-1 transition-all inline-block">Terms and Conditions</Link></li>
+                <li><Link to="/policy/privacy" className="hover:text-white hover:translate-x-1 transition-all inline-block">Privacy Policy</Link></li>
+                <li><Link to="/policy/shipping" className="hover:text-white hover:translate-x-1 transition-all inline-block">Shipping Policy</Link></li>
+                <li><Link to="/bulk" className="hover:text-white hover:translate-x-1 transition-all inline-block">Bulk Enquiry</Link></li>
+                <li><Link to="/fraud" className="hover:text-white hover:translate-x-1 transition-all inline-block">Beware of Fraud</Link></li>
+              </ul>
+            </div>
+          </div>
         </div>
 
-        {/* Bottom Bar - Copyright Update */}
-        <div className="border-t border-emerald-900 pt-8 text-center px-4">
-            <p className="text-[10px] md:text-xs opacity-40 font-bold tracking-widest uppercase">
-                © 2026 Ayurvita Pharma. All rights reserved. Crafted with <span className="text-red-500">❤</span> in India.
-            </p>
+        {/* BOTTOM BAR */}
+        <div className="flex flex-col md:flex-row items-center justify-between pt-8 border-t border-emerald-800 text-[10px] md:text-xs">
+          <p className="opacity-60 font-medium">Copyright © 2026 Hindsole | All rights reserved.</p>
+
+          {/* Scroll to Top Arrow (Absolute positioning on large screens to match design) */}
+          <button
+            onClick={scrollToTop}
+            className="fixed bottom-8 right-8 bg-[#036040] hover:bg-emerald-600 p-2 rounded-full shadow-lg transition-all z-40 group"
+            title="Scroll to Top"
+          >
+            <ArrowUp size={20} className="group-hover:-translate-y-1 transition-transform" />
+          </button>
         </div>
+
+      </div>
     </footer>
   );
 };
