@@ -15,6 +15,7 @@ node_modules
 # Production Build
 dist
 dist-ssr
+deploy.zip
 *.local
 
 # Environment Variables (MOST IMPORTANT)

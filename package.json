@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy:zip": "npm run build && node scripts/create-deploy-zip.js"
   },
   "dependencies": {
     "firebase": "^12.7.0",

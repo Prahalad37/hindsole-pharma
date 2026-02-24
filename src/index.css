@@ -1,3 +1,45 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button,
+a {
+  transition: color 0.2s, background-color 0.2s, transform 0.2s;
+}
+
+@layer utilities {
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Shop by Concern - mobile slider */
+.concern-slider .slick-dots {
+  bottom: -28px;
+}
+.concern-slider .slick-dots li button:before {
+  color: #059669;
+  opacity: 0.4;
+}
+.concern-slider .slick-dots li.slick-active button:before {
+  opacity: 1;
+  color: #047857;
+}

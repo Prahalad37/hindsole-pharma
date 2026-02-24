@@ -14,6 +14,7 @@ export interface Product {
   benefits: string[];
   indications: string;
   dosage: string;
+  tags?: string[];
 }
 
 export interface CartItem extends Product {

@@ -1,11 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { ProductCard } from '../components/ProductCard';
 import { ProductModal } from '../components/ProductModal';
 import { useShop } from '../context/ShopContext';
 import type { Product } from '../types';
 import { Search, PackageSearch, ChevronDown, ChevronUp, Filter, X } from 'lucide-react';
 import { SEO } from '../components/SEO';
+import { filterTags, filterCollections } from '../data/shopCategories';
 
 export const Shop = () => {
   const { products } = useShop();
@@ -16,12 +18,17 @@ export const Shop = () => {
 
   const setCategory = (newCategory: string) => {
     if (newCategory === "All") {
-      searchParams.delete("category");
-      setSearchParams(searchParams);
+      const next = new URLSearchParams(searchParams);
+      next.delete("category");
+      setSearchParams(next);
     } else {
       setSearchParams({ category: newCategory });
     }
   };
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [category]);
 
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -33,18 +40,25 @@ export const Shop = () => {
   });
 
   const safeProducts = products || [];
-  // const uniqueCategories = new Set(safeProducts.map(p => p.category));
-  // const categories = ["All", ...uniqueCategories];
+  const collections = ['All', ...filterCollections];
+  const tags = filterTags;
 
-  // Mock Tags based on Image
-  const tags = ["Inhaler", "Capsule", "Tablet", "Ayurvedic kadha", "Oil", "Chyawanprash", "Ointment"];
-  const collections = ["Fitness", "Mens Health", "Immunity And Wellness", "Womens Health", "Piles Care", "Liver Care", "Livitup", "Diabetes", "Digestive Care", "Pain Management"];
+  const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set());
 
-  // Multi-filter logic
+  const toggleTag = (tag: string) => {
+    setSelectedTags(prev => {
+      const next = new Set(prev);
+      if (next.has(tag)) next.delete(tag);
+      else next.add(tag);
+      return next;
+    });
+  };
+
   const filteredProducts = safeProducts.filter(p => {
-    const matchesCategory = category === "All" || p.category === category || p.form === category;
+    const matchesCategory = category === "All" || p.category === category || p.form === category || (p.tags?.includes(category) ?? false);
     const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesCategory && matchesSearch;
+    const matchesTags = selectedTags.size === 0 || (p.tags && p.tags.some(t => selectedTags.has(t)));
+    return matchesCategory && matchesSearch && matchesTags;
   });
 
   const toggleSection = (section: keyof typeof openSections) => {
@@ -85,9 +99,12 @@ export const Shop = () => {
               <div className="space-y-2 pl-1 animate-in slide-in-from-top-2 duration-200">
                 {tags.map(tag => (
                   <label key={tag} className="flex items-center gap-3 cursor-pointer group">
-                    <div className="w-4 h-4 border-2 border-gray-300 rounded flex items-center justify-center group-hover:border-emerald-500 transition-colors">
-                      {/* Fake Checkbox for visual only since data doesn't map 1:1 yet */}
-                    </div>
+                    <input
+                      type="checkbox"
+                      checked={selectedTags.has(tag)}
+                      onChange={() => toggleTag(tag)}
+                      className="w-4 h-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
+                    />
                     <span className="text-sm text-gray-600 group-hover:text-emerald-700 transition-colors">{tag}</span>
                   </label>
                 ))}
@@ -110,7 +127,7 @@ export const Shop = () => {
                 {collections.map(col => (
                   <button
                     key={col}
-                    onClick={() => setCategory(col === "Immunity And Wellness" ? "Immunity" : col)} // Mapping example
+                    onClick={() => setCategory(col)}
                     className={`block w-full text-left text-sm transition-colors ${category === col ? 'font-bold text-emerald-700' : 'text-gray-600 hover:text-emerald-700'}`}
                   >
                     {col}
@@ -178,18 +195,24 @@ export const Shop = () => {
               <PackageSearch size={48} className="text-gray-300 mb-4" />
               <h3 className="text-lg font-bold text-gray-900">No products found</h3>
               <p className="text-gray-500 text-sm">Try changing filters or search term.</p>
-              <button onClick={() => { setCategory('All'); setSearchTerm(''); }} className="mt-4 text-emerald-600 font-bold hover:underline text-sm">Clear all filters</button>
+              <button onClick={() => { setCategory('All'); setSearchTerm(''); setSelectedTags(new Set()); }} className="mt-4 text-emerald-600 font-bold hover:underline text-sm">Clear all filters</button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <motion.div
+              variants={{ initial: {}, animate: { transition: { staggerChildren: 0.06 } } }}
+              initial="initial"
+              animate="animate"
+              className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6"
+            >
               {filteredProducts.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  onClick={() => setSelectedProduct(product)}
-                />
+                <motion.div key={product.id} variants={{ initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 } }}>
+                  <ProductCard
+                    product={product}
+                    onClick={() => setSelectedProduct(product)}
+                  />
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           )}
         </div>
       </div>
@@ -212,6 +235,22 @@ export const Shop = () => {
             </div>
             {/* Re-use content or simplified version for mobile */}
             <div className="space-y-6">
+              <div>
+                <h3 className="font-bold mb-3">Tags</h3>
+                <div className="space-y-2">
+                  {tags.map(tag => (
+                    <label key={tag} className="flex items-center gap-3 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={selectedTags.has(tag)}
+                        onChange={() => toggleTag(tag)}
+                        className="w-4 h-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
+                      />
+                      <span className="text-sm text-gray-600">{tag}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
               <div>
                 <h3 className="font-bold mb-3">Collections</h3>
                 <div className="space-y-2">

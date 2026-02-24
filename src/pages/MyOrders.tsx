@@ -76,7 +76,7 @@ export const MyOrders = () => {
             <p className="text-gray-500 mb-8 max-w-sm mx-auto">
               Looks like you haven't experienced the healing power of Ayurveda yet.
             </p>
-            <Link to="/shop" className="inline-flex items-center gap-2 bg-emerald-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-200">
+            <Link to="/shop" className="inline-flex items-center gap-2 bg-emerald-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-emerald-700 active:scale-[0.98] transition-all shadow-lg shadow-emerald-200">
               Start Shopping <ArrowRight size={18} />
             </Link>
           </div>
@@ -84,7 +84,7 @@ export const MyOrders = () => {
           // 📦 Orders List
           <div className="space-y-6">
             {orders.map((order) => (
-              <div key={order.id} className="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-100 hover:shadow-md transition-shadow">
+              <div key={order.id} className="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-100 hover:shadow-md hover:-translate-y-1 transition-all duration-300">
 
                 {/* Order Header */}
                 <div className="bg-gray-50/50 px-6 py-4 flex flex-col sm:flex-row justify-between sm:items-center border-b border-gray-100 gap-4">

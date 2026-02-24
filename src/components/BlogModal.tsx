@@ -54,7 +54,7 @@ export const BlogModal = ({ blog, onClose }: BlogModalProps) => {
                   </p>
                   <div className="bg-emerald-50 p-8 rounded-[2rem] border-l-8 border-emerald-500 my-10">
                      <h4 className="text-xl font-bold text-emerald-900 mb-2">Did You Know?</h4>
-                     <p className="text-emerald-800">Natural herbs used in Hindsole products are sourced directly from the foothills of Himalayas to ensure maximum potency.</p>
+                     <p className="text-emerald-800">Natural herbs used in AyurVita products are sourced directly from the foothills of Himalayas to ensure maximum potency.</p>
                   </div>
                   <p className="text-lg leading-relaxed">
                      We believe in sustainable wellness. Our packaging is eco-friendly, and our processes are designed to minimize environmental impact while maximizing potency.

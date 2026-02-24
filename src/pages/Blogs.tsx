@@ -65,7 +65,7 @@ const Blogs = () => {
                 {/* Image */}
                 <div className="relative h-60 overflow-hidden">
                   <img
-                    src={blog.image || "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=800"}
+                    src={blog.image || "/og-image.png"}
                     alt={blog.title}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                   />

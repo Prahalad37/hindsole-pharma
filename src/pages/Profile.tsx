@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useShop } from '../context/ShopContext';
 import { User, Mail, Phone, MapPin, Save, Loader2, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { PageFadeLayout } from '../components/PageFadeLayout';
 
 export const Profile = () => {
     const { user, userProfile, updateUserProfile } = useShop();
@@ -47,8 +48,8 @@ export const Profile = () => {
     if (!user) return <div className="p-10 text-center">Please login to view profile</div>;
 
     return (
-        <div className="min-h-screen bg-stone-50 py-12 px-4 animate-in fade-in">
-            <div className="max-w-2xl mx-auto">
+        <div className="min-h-screen bg-stone-50 py-12 px-4">
+            <PageFadeLayout className="max-w-2xl mx-auto">
 
                 <Link to="/" className="inline-flex items-center gap-2 text-emerald-700 hover:text-emerald-900 font-bold mb-8 transition-colors">
                     <ArrowLeft size={18} /> Back to Home
@@ -129,7 +130,7 @@ export const Profile = () => {
 
                     </form>
                 </div>
-            </div>
+            </PageFadeLayout>
         </div>
     );
 };

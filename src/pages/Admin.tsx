@@ -14,6 +14,7 @@ import toast from 'react-hot-toast';
 import { products as localProductsData } from '../data/products';
 import { AdminLayout } from '../layouts/AdminLayout';
 import { StatsCard } from '../components/admin/StatsCard';
+import { ALLOWED_ADMIN_EMAILS } from '../config';
 
 // Types (Local Admin Types to match Firestore structure)
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -23,9 +24,6 @@ interface Product { id?: string; name: string; price: number; category: string; 
 interface Review { id: string; productId: string; userName: string; rating: number; comment: string; }
 interface Blog { id?: string; title: string; content: string; author: string; image: string; createdAt?: { toDate: () => Date } | null; }
 interface Subscriber { id: string; email: string; subscribedAt?: { toDate: () => Date } | null; }
-
-// 🔒 SECURITY: Enforce Email Check
-const ALLOWED_ADMINS = ['ppandtech8998@gmail.com'];
 
 export const Admin = () => {
   const navigate = useNavigate();
@@ -65,7 +63,7 @@ export const Admin = () => {
         // 🔒 SECURITY: Enforce Email Check
         const userEmail = (user.email || '').toLowerCase().trim();
 
-        if (ALLOWED_ADMINS.some(admin => admin.toLowerCase() === userEmail)) {
+        if (ALLOWED_ADMIN_EMAILS.includes(userEmail)) {
           setIsAuthenticated(true);
         } else {
           setIsAuthenticated(false);

@@ -1,30 +1,20 @@
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, Navigate } from 'react-router-dom';
 import { ArrowLeft, Calendar, User, Share2, Clock } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { blogData } from '../data/blogs';
 
 const BlogPost = () => {
   const { slug } = useParams();
-  // 🔍 Find blog by slug from local data
   const blog = blogData.find(b => b.slug === slug);
 
-
-
-  if (!blog) return (
-    <div className="h-screen flex flex-col items-center justify-center gap-4">
-      <h2 className="text-2xl font-bold text-gray-800">Article not found.</h2>
-      <Link to="/blogs" className="text-emerald-600 font-bold hover:underline flex items-center gap-2">
-        <ArrowLeft size={20} /> Back to Blogs
-      </Link>
-    </div>
-  );
+  if (!blog) return <Navigate to="/404" replace />;
 
   return (
     <div className="bg-white min-h-screen pb-20">
       {/* Article Hero */}
       <div className="h-[50vh] relative">
         <img
-          src={blog.image || "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=800"}
+          src={blog.image || "/og-image.png"}
           className="w-full h-full object-cover"
           alt={blog.title}
         />

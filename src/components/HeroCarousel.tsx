@@ -51,12 +51,18 @@ const HeroCarousel: React.FC = () => {
         arrows: false,
         fade: false,
         cssEase: 'ease-in-out',
+        swipe: true,
+        swipeToSlide: true,
+        touchMove: true,
+        touchThreshold: 15,
+        draggable: true,
+        lazyLoad: 'ondemand' as const,
         responsive: [
             {
                 breakpoint: 768,
                 settings: {
                     fade: false,
-                    speed: 600
+                    speed: 500
                 }
             }
         ]

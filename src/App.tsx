@@ -1,5 +1,5 @@
 import { useState, lazy, Suspense } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { ShopProvider } from './context/ShopContext';
 
@@ -7,7 +7,7 @@ import { ShopProvider } from './context/ShopContext';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { CartSidebar } from './components/CartSidebar';
-import { FloatingNav } from './components/FloatingNav';
+import { FloatingActions } from './components/FloatingActions';
 import { ScrollToTop } from './components/ScrollToTop';
 
 // Eager load Admin to prevent routing issues
@@ -25,7 +25,18 @@ const Story = lazy(() => import('./pages/Story').then(m => ({ default: m.Story }
 const Policy = lazy(() => import('./pages/Policy').then(m => ({ default: m.Policy })));
 const MyOrders = lazy(() => import('./pages/MyOrders').then(m => ({ default: m.MyOrders })));
 const Checkout = lazy(() => import('./pages/Checkout').then(m => ({ default: m.Checkout })));
+const Order = lazy(() => import('./pages/Order').then(m => ({ default: m.Order })));
 const Profile = lazy(() => import('./pages/Profile').then(m => ({ default: m.Profile })));
+const Partner = lazy(() => import('./pages/Partner').then(m => ({ default: m.Partner })));
+const ContractManufacturing = lazy(() => import('./pages/ContractManufacturing').then(m => ({ default: m.ContractManufacturing })));
+const BulkEnquiry = lazy(() => import('./pages/BulkEnquiry').then(m => ({ default: m.BulkEnquiry })));
+const BewareOfFraud = lazy(() => import('./pages/BewareOfFraud').then(m => ({ default: m.BewareOfFraud })));
+const NotFound = lazy(() => import('./pages/NotFound').then(m => ({ default: m.NotFound })));
+
+function ShopRoute() {
+  const location = useLocation();
+  return <Shop key={location.search} />;
+}
 
 function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -42,8 +53,8 @@ function App() {
           {/* ✅ Navigation Components */}
           <Header onCartClick={() => setIsCartOpen(true)} />
 
-          {/* ✅ Global Floating Menu (For all users on mobile) */}
-          <FloatingNav onCartClick={() => setIsCartOpen(true)} />
+          {/* ✅ Floating Actions: WhatsApp + Scroll Up + Menu (pill bar, mobile-first) */}
+          <FloatingActions onCartClick={() => setIsCartOpen(true)} />
 
           <CartSidebar isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
 
@@ -62,22 +73,33 @@ function App() {
 
                 {/* Static Pages */}
                 <Route path="/" element={<Home />} />
-                <Route path="/shop" element={<Shop />} />
+                <Route path="/shop" element={<ShopRoute />} />
                 <Route path="/consult" element={<Consult />} />
                 <Route path="/story" element={<Story />} />
                 <Route path="/my-orders" element={<MyOrders />} />
                 <Route path="/blogs" element={<Blogs />} />
                 <Route path="/checkout" element={<Checkout />} />
+                <Route path="/order" element={<Order />} />
                 <Route path="/profile" element={<Profile />} />
 
                 {/* Nested/Dynamic Routes */}
                 <Route path="/policy/:type" element={<Policy />} />
 
-                {/* Product Details Route */}
-                <Route path="/product/:id" element={<ProductDetails />} />
+                {/* Product Details Route (slug-based) */}
+                <Route path="/product/:slug" element={<ProductDetails />} />
 
-                {/* 👇 FIXED: Ab ye Slug read karega (e.g. ayurvita.com/joint-pain-relief) */}
+                {/* Footer Pages */}
+                <Route path="/partner" element={<Partner />} />
+                <Route path="/manufacturing" element={<ContractManufacturing />} />
+                <Route path="/bulk" element={<BulkEnquiry />} />
+                <Route path="/fraud" element={<BewareOfFraud />} />
+
+                {/* Blog Post (slug-based) */}
                 <Route path="/:slug" element={<BlogPost />} />
+
+                {/* 404 */}
+                <Route path="/404" element={<NotFound />} />
+                <Route path="*" element={<NotFound />} />
 
               </Routes>
             </Suspense>

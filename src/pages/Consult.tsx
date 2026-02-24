@@ -8,6 +8,7 @@ import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { SEO } from '../components/SEO';
+import { PageFadeLayout } from '../components/PageFadeLayout';
 
 export const Consult = () => {
     const [loading, setLoading] = useState(false);
@@ -73,7 +74,7 @@ export const Consult = () => {
 
     return (
         <div className="min-h-screen bg-stone-50 py-12 px-4 md:py-20">
-            <div className="max-w-6xl mx-auto">
+            <PageFadeLayout className="max-w-6xl mx-auto">
 
                 {/* 🌿 Header Section */}
                 <div className="text-center mb-16 space-y-4">
@@ -209,7 +210,7 @@ export const Consult = () => {
                                 <textarea required rows={3} value={formData.message} onChange={e => setFormData({ ...formData, message: e.target.value })} className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-11 pr-4 py-3.5 font-medium outline-none focus:ring-2 focus:ring-emerald-500 resize-none transition-all" placeholder="Briefly describe your health issue..."></textarea>
                             </div>
 
-                            <button disabled={loading} className="w-full bg-emerald-800 text-white py-4 rounded-xl font-bold text-lg hover:bg-emerald-900 transition-all shadow-lg hover:shadow-xl hover:-translate-y-1 flex justify-center items-center gap-2">
+                            <button disabled={loading} className="w-full bg-emerald-800 text-white py-4 rounded-xl font-bold text-lg hover:bg-emerald-900 active:scale-[0.98] transition-all shadow-lg hover:shadow-xl hover:-translate-y-1 flex justify-center items-center gap-2">
                                 {loading ? <Loader2 className="animate-spin" /> : <>Confirm Appointment <ArrowRight size={18} /></>}
                             </button>
 
@@ -219,7 +220,7 @@ export const Consult = () => {
                         </form>
                     </div>
                 </div>
-            </div>
+            </PageFadeLayout>
         </div>
     );
 };

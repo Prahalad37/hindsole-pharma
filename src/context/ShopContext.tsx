@@ -44,7 +44,14 @@ export const ShopProvider = ({ children }: { children: ReactNode }) => {
       if (!savedCart) return [];
 
       const parsedCart = JSON.parse(savedCart);
-      return parsedCart.filter((item: Product) => typeof item.id === 'number');
+      if (!Array.isArray(parsedCart)) return [];
+      return parsedCart.filter((item: unknown): item is CartItem =>
+        typeof item === 'object' &&
+        item !== null &&
+        typeof (item as CartItem).id === 'number' &&
+        typeof (item as CartItem).quantity === 'number' &&
+        (item as CartItem).quantity >= 1
+      );
     } catch {
       console.warn("LocalStorage access denied or empty.");
       return [];
@@ -71,60 +78,69 @@ export const ShopProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [cart]);
 
-  // ☁️ 3. Cloud Sync (Firestore - Cart & Profile)
+  const isWritingCart = { current: false };
+
   useEffect(() => {
     if (!user) {
-      // Clear profile on logout
       if (userProfile) {
         setTimeout(() => setUserProfile(null), 0);
       }
       return;
     }
 
-    // A. Sync Cart
-    const unsubCart = onSnapshot(doc(db, 'carts', user.uid), (doc) => {
-      if (doc.exists()) {
-        const data = doc.data();
-        setCart(data.items || []);
-      }
-    });
+    const unsubCart = onSnapshot(
+      doc(db, 'carts', user.uid),
+      (snapshot) => {
+        if (snapshot.exists() && !isWritingCart.current) {
+          const data = snapshot.data();
+          if (data.items && data.items.length > 0) {
+            setCart(data.items);
+          }
+        }
+      },
+      (err) => console.warn("Cart sync error:", err)
+    );
 
-    // B. Sync Profile
-    const unsubProfile = onSnapshot(doc(db, 'users', user.uid), (doc) => {
-      if (doc.exists()) {
-        setUserProfile(doc.data() as UserProfile);
-      } else {
-        // Init profile if not exists
-        const initialProfile = {
-          uid: user.uid,
-          name: user.displayName || '',
-          email: user.email || ''
-        };
-        setDoc(doc.ref, initialProfile, { merge: true });
-        setUserProfile(initialProfile);
-      }
-    });
+    const unsubProfile = onSnapshot(
+      doc(db, 'users', user.uid),
+      (snapshot) => {
+        if (snapshot.exists()) {
+          setUserProfile(snapshot.data() as UserProfile);
+        } else {
+          const initialProfile = {
+            uid: user.uid,
+            name: user.displayName || '',
+            email: user.email || ''
+          };
+          setDoc(snapshot.ref, initialProfile, { merge: true }).catch(() => {});
+          setUserProfile(initialProfile);
+        }
+      },
+      (err) => console.warn("Profile sync error:", err)
+    );
 
     return () => {
       unsubCart();
       unsubProfile();
     };
-  }, [user, userProfile]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
-  // B. Write Cart to Cloud on Change
   useEffect(() => {
     if (!user) return;
 
-    // Debounce write to avoid rapid fires
+    isWritingCart.current = true;
     const timer = setTimeout(async () => {
       try {
         await setDoc(doc(db, 'carts', user.uid), { items: cart }, { merge: true });
       } catch (err) {
-        console.error("Cloud Sync Error:", err);
+        console.warn("Cart write error:", err);
+      } finally {
+        isWritingCart.current = false;
       }
-    }, 1000);
+    }, 1500);
 
-    return () => clearTimeout(timer);
+    return () => { clearTimeout(timer); isWritingCart.current = false; };
   }, [cart, user]);
 
   const updateUserProfile = async (data: Partial<UserProfile>) => {

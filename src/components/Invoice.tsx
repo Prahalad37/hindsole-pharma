@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { useReactToPrint } from 'react-to-print';
 import { Printer } from 'lucide-react';
 import type { Order } from '../types';
+import { COMPANY } from '../config/company';
 
 interface InvoiceProps {
     order: Order;
@@ -13,12 +14,12 @@ const InvoiceContent = ({ order }: { order: Order }) => {
             {/* Header */}
             <div className="flex justify-between items-start mb-8 border-b-2 border-emerald-900 pb-6">
                 <div>
-                    <h1 className="text-4xl font-black text-emerald-900 mb-2 font-serif">HINDSOLF PHARMA</h1>
+                    <h1 className="text-4xl font-black text-emerald-900 mb-2 font-serif">{COMPANY.name.toUpperCase()} PHARMA</h1>
                     <p className="text-sm text-gray-600">Pure. Potent. 100% Ayurvedic.</p>
                     <p className="text-sm mt-2 text-gray-500 max-w-xs">
-                        123, Wellness Street, Himalaya Foothills,<br />
-                        Uttarakhand, India - 248001<br />
-                        GSTIN: 05ABCDE1234F1Z5
+                        {COMPANY.address}
+                        <br />
+                        GSTIN: {COMPANY.gst}
                     </p>
                 </div>
                 <div className="text-right">
@@ -88,7 +89,7 @@ const InvoiceContent = ({ order }: { order: Order }) => {
             {/* Footer */}
             <div className="text-center text-xs text-gray-400 pt-8 border-t border-gray-100">
                 <p className="mb-2">Thank you for choosing Ayurveda. Get well soon!</p>
-                <p>For support, email us at support@hindsole.com</p>
+                <p>For support, email us at {COMPANY.email}</p>
             </div>
         </div>
     );

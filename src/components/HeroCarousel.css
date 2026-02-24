@@ -13,34 +13,55 @@
     overflow: hidden;
 }
 
+.hero-slide picture {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
 .hero-slide-image {
     width: 100%;
     display: block;
-    object-fit: cover;
-    object-position: center !important;
 }
 
-/* Desktop - Taller and fuller */
-@media (min-width: 769px) {
-    .hero-slide {
-        height: 650px;
-    }
-
-    .hero-slide-image {
-        height: 650px;
-        min-height: 650px;
-    }
-}
-
-/* Mobile */
+/* Mobile - aspect-ratio based, contain = no cutoff */
 @media (max-width: 768px) {
     .hero-slide {
-        height: 500px;
+        aspect-ratio: 4 / 5;
+        position: relative;
+    }
+
+    .hero-slide picture {
+        position: absolute;
+        inset: 0;
     }
 
     .hero-slide-image {
-        height: 500px;
-        min-height: 500px;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        object-position: center;
+    }
+}
+
+/* Desktop */
+@media (min-width: 769px) {
+    .hero-slide {
+        aspect-ratio: 16 / 9;
+        max-height: 650px;
+        position: relative;
+    }
+
+    .hero-slide picture {
+        position: absolute;
+        inset: 0;
+    }
+
+    .hero-slide-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
     }
 }
 
@@ -95,28 +116,34 @@
     transform: scale(1.1);
 }
 
-/* Mobile dots styling - Keep on right but smaller */
+/* Mobile dots - larger touch targets */
 @media (max-width: 768px) {
     .hero-carousel-wrapper .slick-dots {
-        right: 12px;
-        gap: 10px;
+        right: 10px;
+        gap: 6px;
     }
 
     .hero-carousel-wrapper .slick-dots li {
-        width: 10px;
-        height: 10px;
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .hero-carousel-wrapper .slick-dots li button {
-        width: 10px;
-        height: 10px;
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .hero-carousel-wrapper .slick-dots li button:before {
-        font-size: 10px;
-        line-height: 10px;
-        width: 10px;
-        height: 10px;
+        font-size: 12px;
+        line-height: 12px;
+        width: 12px;
+        height: 12px;
         color: #fff;
     }
 

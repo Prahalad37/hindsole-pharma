@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Facebook, Instagram, Youtube, ArrowUp } from 'lucide-react';
+import { Facebook, Instagram, Youtube, Phone, Mail } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { COMPANY } from '../config/company';
 import { db } from '../firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import toast from 'react-hot-toast';
@@ -29,10 +30,6 @@ export const Footer = () => {
     }
   };
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
   return (
     <footer className="bg-[#024E32] text-white pt-16 pb-6 font-sans border-t border-emerald-900/30 relative">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -45,25 +42,25 @@ export const Footer = () => {
                 <img
                   src="/logo.svg"
                   alt="Logo"
-                  className="h-10 w-10 object-contain brightness-0 invert"
+                  className="h-16 w-16 object-contain brightness-0 invert"
                 />
               </div>
               <div>
-                <h2 className="font-black text-xl tracking-wide uppercase leading-none">HINDSole</h2>
-                <p className="text-[10px] tracking-[0.2em] opacity-80 uppercase">New Age Ayurved</p>
+                <h2 className="font-black text-xl tracking-wide uppercase leading-none">AyurVita</h2>
+                <p className="text-[10px] tracking-[0.2em] opacity-80 uppercase">Authentic Ayurveda</p>
               </div>
             </Link>
             <p className="text-sm text-emerald-100/70 leading-relaxed">
-              Hindsole is an online Ayurvedic store that brings traditional Indian Ayurved to modern consumers. With 150 years of heritage, the formulations have treated thousands of patients.
+              AyurVita is an online Ayurvedic store that brings traditional Indian Ayurveda to modern consumers. With 150 years of heritage, the formulations have treated thousands of patients.
             </p>
           </div>
 
           <div className="flex flex-col items-start md:items-end gap-3">
             <span className="text-[10px] font-bold tracking-[0.2em] uppercase opacity-60">Social</span>
             <div className="flex gap-4">
-              <a href="#" className="hover:text-amber-400 transition-colors"><Facebook size={20} /></a>
-              <a href="#" className="hover:text-amber-400 transition-colors"><Instagram size={20} /></a>
-              <a href="#" className="hover:text-amber-400 transition-colors"><Youtube size={20} /></a>
+              <a href="https://www.facebook.com/ayurvita" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="hover:text-amber-400 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"><Facebook size={20} /></a>
+              <a href="https://www.instagram.com/ayurvita" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="hover:text-amber-400 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"><Instagram size={20} /></a>
+              <a href="https://www.youtube.com/@ayurvita" target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="hover:text-amber-400 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"><Youtube size={20} /></a>
             </div>
           </div>
         </div>
@@ -97,7 +94,7 @@ export const Footer = () => {
           </div>
 
           {/* Links Grid (Right - 8 cols) */}
-          <div className="lg:col-span-8 grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="lg:col-span-8 grid grid-cols-2 md:grid-cols-5 gap-8">
             <div>
               <h4 className="text-[10px] font-bold tracking-[0.2em] uppercase mb-6 opacity-60">Shop</h4>
               <ul className="space-y-3 text-xs md:text-sm text-emerald-100/80">
@@ -139,21 +136,50 @@ export const Footer = () => {
                 <li><Link to="/fraud" className="hover:text-white hover:translate-x-1 transition-all inline-block">Beware of Fraud</Link></li>
               </ul>
             </div>
+            <div>
+              <h4 className="text-[10px] font-bold tracking-[0.2em] uppercase mb-6 opacity-60">Contact</h4>
+              <ul className="space-y-3 text-xs md:text-sm text-emerald-100/80">
+                <li>
+                  <a href={`tel:${COMPANY.phone.replace(/\D/g, '')}`} className="hover:text-white hover:translate-x-1 transition-all inline-flex items-center gap-2">
+                    <Phone size={14} className="shrink-0" /> {COMPANY.phone}
+                  </a>
+                </li>
+                <li>
+                  <a href={`mailto:${COMPANY.email}`} className="hover:text-white hover:translate-x-1 transition-all inline-flex items-center gap-2">
+                    <Mail size={14} className="shrink-0" /> {COMPANY.email}
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        {/* BUSINESS REGISTRATION */}
+        <div className="py-6 border-t border-emerald-800">
+          <h4 className="text-[10px] font-bold tracking-[0.2em] uppercase mb-4 opacity-60">Registered Business</h4>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs text-emerald-100/90">
+            <div>
+              <p className="font-bold text-white">{COMPANY.name}</p>
+              <p className="opacity-80">Ayurvedic Wellness</p>
+            </div>
+            <div>
+              <p className="font-medium text-white/90">Address</p>
+              <p className="whitespace-pre-line">{COMPANY.address}</p>
+            </div>
+            <div>
+              <p className="font-medium text-white/90">GSTIN</p>
+              <p className="font-mono">{COMPANY.gst}</p>
+            </div>
+            <div>
+              <p className="font-medium text-white/90">Est.</p>
+              <p>{COMPANY.establishedYear}</p>
+            </div>
           </div>
         </div>
 
         {/* BOTTOM BAR */}
         <div className="flex flex-col md:flex-row items-center justify-between pt-8 border-t border-emerald-800 text-[10px] md:text-xs">
-          <p className="opacity-60 font-medium">Copyright © 2026 Hindsole | All rights reserved.</p>
-
-          {/* Scroll to Top Arrow (Absolute positioning on large screens to match design) */}
-          <button
-            onClick={scrollToTop}
-            className="fixed bottom-8 right-8 bg-[#036040] hover:bg-emerald-600 p-2 rounded-full shadow-lg transition-all z-40 group"
-            title="Scroll to Top"
-          >
-            <ArrowUp size={20} className="group-hover:-translate-y-1 transition-transform" />
-          </button>
+          <p className="opacity-60 font-medium">Copyright © {COMPANY.establishedYear} {COMPANY.name} | All rights reserved.</p>
         </div>
 
       </div>

@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { Leaf, Heart, Mountain, Quote, ShieldCheck } from 'lucide-react';
 
 export const Story = () => {
@@ -9,7 +10,7 @@ export const Story = () => {
                 <div className="absolute inset-0">
                     {/* Background Image */}
                     <img
-                        src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=2070&auto=format&fit=crop"
+                        src="/story-hero-himalayas.jpg"
                         alt="Himalayas & Herbs"
                         className="w-full h-full object-cover brightness-[0.4]"
                     />
@@ -30,13 +31,19 @@ export const Story = () => {
             {/* 🏔️ Values Grid with Product Mentions */}
             <div className="max-w-7xl mx-auto px-6 py-24">
                 <div className="text-center mb-16">
-                    <h2 className="text-3xl md:text-4xl font-bold text-emerald-950 font-serif">Why Ayurvita is Different</h2>
+                    <h2 className="text-3xl md:text-4xl font-bold text-emerald-950 font-serif">Why AyurVita is Different</h2>
                     <p className="text-gray-500 mt-4">We don't just sell medicines; we deliver purity.</p>
                 </div>
 
                 <div className="grid md:grid-cols-3 gap-12 text-center">
                     {/* Value 1 */}
-                    <div className="space-y-4 px-4 p-6 rounded-2xl hover:bg-white hover:shadow-xl transition-all duration-300">
+                    <motion.div
+                        initial={{ opacity: 0, y: 24 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.4 }}
+                        className="space-y-4 px-4 p-6 rounded-2xl hover:bg-white hover:shadow-xl transition-all duration-300"
+                    >
                         <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
                             <Mountain size={32} />
                         </div>
@@ -44,10 +51,16 @@ export const Story = () => {
                         <p className="text-gray-600 leading-relaxed">
                             The herbs used in <b>Dr. Arthovita</b> and <b>Gasovita</b> are sourced directly from the upper ranges of Uttarakhand, ensuring 100% potency.
                         </p>
-                    </div>
+                    </motion.div>
 
                     {/* Value 2 */}
-                    <div className="space-y-4 px-4 p-6 rounded-2xl hover:bg-white hover:shadow-xl transition-all duration-300">
+                    <motion.div
+                        initial={{ opacity: 0, y: 24 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.4, delay: 0.1 }}
+                        className="space-y-4 px-4 p-6 rounded-2xl hover:bg-white hover:shadow-xl transition-all duration-300"
+                    >
                         <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
                             <Leaf size={32} />
                         </div>
@@ -55,10 +68,16 @@ export const Story = () => {
                         <p className="text-gray-600 leading-relaxed">
                             Unlike modern pills, our products like <b>Dr. Gynevita</b> contain no steroids or synthetic fillers. Pure, safe, and effective.
                         </p>
-                    </div>
+                    </motion.div>
 
                     {/* Value 3 */}
-                    <div className="space-y-4 px-4 p-6 rounded-2xl hover:bg-white hover:shadow-xl transition-all duration-300">
+                    <motion.div
+                        initial={{ opacity: 0, y: 24 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.4, delay: 0.2 }}
+                        className="space-y-4 px-4 p-6 rounded-2xl hover:bg-white hover:shadow-xl transition-all duration-300"
+                    >
                         <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
                             <ShieldCheck size={32} />
                         </div>
@@ -66,7 +85,7 @@ export const Story = () => {
                         <p className="text-gray-600 leading-relaxed">
                             We follow the exact texts of Ayurveda but test every batch of <b>Dr. Diabvita</b> in GMP-certified labs for safety.
                         </p>
-                    </div>
+                    </motion.div>
                 </div>
             </div>
 
@@ -77,13 +96,19 @@ export const Story = () => {
                     <Quote size={400} />
                 </div>
 
-                <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-16 relative z-10">
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5 }}
+                    className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-16 relative z-10"
+                >
                     <div className="w-full md:w-1/2 relative">
                         <div className="absolute -top-4 -left-4 w-full h-full border-2 border-emerald-500/30 rounded-3xl"></div>
                         <img
-                            src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&q=80&w=800"
+                            src="/founder-portrait.jpg"
                             alt="Sumit Pal - Founder"
-                            className="rounded-3xl shadow-2xl relative z-10 w-full h-[500px] object-cover filter brightness-90"
+                            className="rounded-3xl shadow-2xl relative z-10 w-full h-[500px] object-cover object-top filter brightness-90"
                         />
                     </div>
 
@@ -96,7 +121,7 @@ export const Story = () => {
                         </h2>
                         <div className="space-y-6 text-emerald-100 text-lg leading-relaxed font-light">
                             <p>
-                                "I started <b>Ayurvita Pharma</b> with a simple observation. I saw people popping painkillers for joint pain and antacids for gas every single day. They were treating the symptoms, not the root cause."
+                                "I started <b>AyurVita Pharma</b> with a simple observation. I saw people popping painkillers for joint pain and antacids for gas every single day. They were treating the symptoms, not the root cause."
                             </p>
                             <p>
                                 "I wanted to change that. With <b>Dr. Arthovita</b> and <b>Dr. Gasovita</b>, we are bringing back the power of Indian roots. My promise is simple: authentic Ayurveda that actually works."
@@ -104,10 +129,10 @@ export const Story = () => {
                         </div>
                         <div className="pt-6 border-t border-emerald-700/50">
                             <p className="font-black text-2xl text-white">Sumit Pal</p>
-                            <p className="text-emerald-400 font-medium">Founder & CEO, Ayurvita Pharma</p>
+                            <p className="text-emerald-400 font-medium">Founder & CEO, AyurVita Pharma                            </p>
                         </div>
                     </div>
-                </div>
+                </motion.div>
             </div>
 
             {/* ❤️ Bottom CTA */}
@@ -117,7 +142,7 @@ export const Story = () => {
                 <p className="text-gray-500 text-lg max-w-2xl mx-auto mb-10">
                     Start your journey towards a chemical-free, healthier life with Sumit Pal's vision.
                 </p>
-                <a href="/shop" className="inline-block bg-emerald-600 text-white px-10 py-4 rounded-xl font-bold hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-200 hover:scale-105">
+                <a href="/shop" className="inline-block bg-emerald-600 text-white px-10 py-4 rounded-xl font-bold hover:bg-emerald-700 active:scale-[0.98] transition-all shadow-xl shadow-emerald-200 hover:scale-105">
                     Explore Our Medicines
                 </a>
             </div>

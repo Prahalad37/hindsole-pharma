@@ -8,55 +8,41 @@ import {
   ChevronDown, ChevronUp, Lock
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { PageFadeLayout } from '../components/PageFadeLayout';
 
 export const Checkout = () => {
   const { cart, cartTotal, clearCart, user } = useShop();
   const navigate = useNavigate();
-  const [step, setStep] = useState(user ? 2 : 1); // 1: Login, 2: Address, 3: Payment
-  const [mobile, setMobile] = useState('');
+  const [step, setStep] = useState(1); // 1: Delivery Details, 2: Payment
   const [showSummary, setShowSummary] = useState(false);
 
-  // Dummy Form State
-  const [address, setAddress] = useState({
+  const [formData, setFormData] = useState({
+    mobile: user?.phoneNumber?.replace('+91', '') ?? '',
     pincode: '',
     city: '',
     state: '',
-    name: '',
+    name: user?.displayName ?? '',
     street: ''
   });
 
   const [paymentMethod, setPaymentMethod] = useState('upi');
 
   useEffect(() => {
-    if (cart.length === 0) {
-      navigate('/shop');
-    }
-    // Auto-advance if user is already logged in
-    if (user && step === 1) {
-      setTimeout(() => setStep(2), 0);
-      if (user.phoneNumber) {
-        setTimeout(() => setMobile(user.phoneNumber!.replace('+91', '')), 0);
-      }
-    }
-  }, [cart, navigate, user, step]);
+    if (cart.length === 0) navigate('/shop');
+  }, [cart, navigate]);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleDeliveryDetails = (e: React.FormEvent) => {
     e.preventDefault();
-    if (mobile.length < 10) {
+    const phone = formData.mobile.replace(/\D/g, '');
+    if (phone.length < 10) {
       toast.error('Please enter a valid 10-digit number');
       return;
     }
-    setStep(2);
-    toast.success('Login Verified!');
-  };
-
-  const handleAddress = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!address.pincode || !address.name || !address.street) {
+    if (!formData.pincode || !formData.name || !formData.street) {
       toast.error('Please fill all required fields');
       return;
     }
-    setStep(3);
+    setStep(2);
   };
 
   const handlePayment = async () => {
@@ -74,14 +60,14 @@ export const Checkout = () => {
         status: 'Pending',
         paymentMethod: paymentMethod === 'cod' ? 'Cash on Delivery' : 'UPI',
         createdAt: serverTimestamp(),
-        userId: user ? user.uid : null, // Link to user if logged in
+        userId: user ? user.uid : null,
         customer: {
-          name: address.name,
-          phone: mobile,
-          address: address.street,
-          city: address.city,
-          pincode: address.pincode,
-          state: address.state
+          name: formData.name,
+          phone: formData.mobile.replace(/\D/g, ''),
+          address: formData.street,
+          city: formData.city,
+          pincode: formData.pincode,
+          state: formData.state
         }
       };
 
@@ -120,33 +106,32 @@ export const Checkout = () => {
   return (
     <div className="min-h-screen bg-gray-50/50 font-sans pb-20">
 
-      {/* HEADER */}
       <div className="bg-white sticky top-0 z-10 border-b border-gray-100 px-4 py-3 flex items-center justify-between shadow-sm">
-        <button onClick={() => navigate(-1)} className="p-2 -ml-2 text-gray-500 hover:bg-gray-50 rounded-full">
-          <ChevronLeft size={20} />
+        <button onClick={() => navigate(-1)} className="p-2.5 -ml-2 text-gray-500 hover:bg-gray-50 rounded-full min-w-[44px] min-h-[44px] flex items-center justify-center">
+          <ChevronLeft size={22} />
         </button>
         <div className="flex flex-col items-center">
           <h1 className="text-sm font-bold text-gray-800 tracking-wide uppercase">Secure Checkout</h1>
-          <div className="flex items-center gap-1 text-[10px] text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full mt-0.5">
-            <ShieldCheck size={10} /> 100% Safe & Secure
+          <div className="flex items-center gap-1 text-xs text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full mt-0.5">
+            <ShieldCheck size={12} /> 100% Safe & Secure
           </div>
         </div>
-        <div className="w-8"></div> {/* Spacer */}
+        <div className="w-11"></div>
       </div>
 
-      <div className="max-w-md mx-auto p-4 space-y-6">
+      <PageFadeLayout className="max-w-md mx-auto p-4 space-y-6">
 
         {/* ORDER SUMMARY TOGGLE */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
           <button
             onClick={() => setShowSummary(!showSummary)}
-            className="w-full flex justify-between items-center p-4 bg-gray-50/50 hover:bg-gray-100 transition-colors"
+            className="w-full flex justify-between items-center p-4 bg-gray-50/50 hover:bg-gray-100 transition-colors min-h-[52px]"
           >
             <div className="flex items-center gap-2 text-sm font-bold text-gray-700">
               <ShoppingBagIcon /> Order Summary
-              <span className="bg-emerald-100 text-emerald-700 text-[10px] px-1.5 py-0.5 rounded-full">₹{cartTotal}</span>
+              <span className="bg-emerald-100 text-emerald-700 text-xs px-2 py-0.5 rounded-full">₹{cartTotal}</span>
             </div>
-            {showSummary ? <ChevronUp size={16} className="text-gray-400" /> : <ChevronDown size={16} className="text-gray-400" />}
+            {showSummary ? <ChevronUp size={18} className="text-gray-400" /> : <ChevronDown size={18} className="text-gray-400" />}
           </button>
 
           {showSummary && (
@@ -171,55 +156,45 @@ export const Checkout = () => {
           )}
         </div>
 
-        {/* STEP 1: LOGIN */}
+        {/* STEP 1: DELIVERY DETAILS */}
         <div className={`transition-all duration-300 ${step > 1 ? 'opacity-50 pointer-events-none' : ''}`}>
           <h3 className="flex items-center gap-2 font-bold text-gray-800 mb-3">
             <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${step >= 1 ? 'bg-emerald-900 text-white' : 'bg-gray-200'}`}>1</span>
-            Login Check
+            Delivery Details
             {step > 1 && <CheckCircle2 size={16} className="text-emerald-500 ml-auto" />}
           </h3>
 
           {step === 1 && (
-            <form onSubmit={handleLogin} className="bg-white p-5 rounded-2xl shadow-sm border border-gray-200">
-              <label className="text-xs font-bold text-gray-500 uppercase">Mobile Number</label>
-              <div className="mt-2 flex items-center border border-gray-300 rounded-xl px-3 py-3 focus-within:border-emerald-500 focus-within:ring-1 focus-within:ring-emerald-500 transition-all">
-                <span className="text-gray-500 font-bold border-r pr-3 mr-3">+91</span>
+            <form onSubmit={handleDeliveryDetails} className="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 space-y-4 animate-in fade-in slide-in-from-bottom-4">
+              <div>
+                <label className="text-xs font-bold text-gray-500 uppercase">Mobile Number *</label>
+                <div className="mt-1 flex items-center border-b-2 border-gray-100 focus-within:border-emerald-500 focus-within:ring-1 focus-within:ring-emerald-500 rounded-t px-3 py-2 transition-all">
+                  <span className="text-gray-500 font-bold border-r pr-3 mr-3 text-sm">+91</span>
+                  <input
+                    type="tel"
+                    maxLength={10}
+                    value={formData.mobile}
+                    onChange={(e) => setFormData({ ...formData, mobile: e.target.value.replace(/\D/g, '') })}
+                    placeholder="10-digit number"
+                    className="flex-1 outline-none font-bold text-gray-900 placeholder:font-normal placeholder:text-gray-400 py-2 text-sm"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="text-xs font-bold text-gray-500">Full Name *</label>
                 <input
-                  type="tel"
-                  maxLength={10}
-                  value={mobile}
-                  onChange={(e) => setMobile(e.target.value.replace(/\D/g, ''))}
-                  placeholder="Enter your phone number"
-                  className="flex-1 outline-none font-bold text-gray-900 placeholder:font-normal placeholder:text-gray-400"
-                  autoFocus
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className="w-full mt-1 border-b-2 border-gray-100 focus:border-emerald-500 outline-none py-2 text-sm font-bold"
+                  placeholder="John Doe"
                 />
               </div>
-              <button type="submit" className="w-full mt-4 bg-emerald-900 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-200 hover:bg-emerald-800 transition-all">
-                CONTINUE
-              </button>
-              <p className="mt-3 text-[10px] text-center text-gray-400">
-                By continuing, you agree to our Terms of Service & Privacy Policy
-              </p>
-            </form>
-          )}
-        </div>
-
-        {/* STEP 2: ADDRESS */}
-        <div className={`transition-all duration-300 ${step !== 2 ? (step > 2 ? 'opacity-50' : 'opacity-40 pointer-events-none') : ''}`}>
-          <h3 className="flex items-center gap-2 font-bold text-gray-800 mb-3">
-            <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${step >= 2 ? 'bg-emerald-900 text-white' : 'bg-gray-200'}`}>2</span>
-            Details
-            {step > 2 && <CheckCircle2 size={16} className="text-emerald-500 ml-auto" />}
-          </h3>
-
-          {step === 2 && (
-            <form onSubmit={handleAddress} className="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 space-y-4 animate-in fade-in slide-in-from-bottom-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-bold text-gray-500">Pincode *</label>
                   <input
-                    value={address.pincode}
-                    onChange={(e) => setAddress({ ...address, pincode: e.target.value })}
+                    value={formData.pincode}
+                    onChange={(e) => setFormData({ ...formData, pincode: e.target.value })}
                     maxLength={6}
                     className="w-full mt-1 border-b-2 border-gray-100 focus:border-emerald-500 outline-none py-2 text-sm font-bold"
                     placeholder="110001"
@@ -228,104 +203,91 @@ export const Checkout = () => {
                 <div>
                   <label className="text-xs font-bold text-gray-500">City</label>
                   <input
-                    value={address.city}
-                    onChange={(e) => setAddress({ ...address, city: e.target.value })}
+                    value={formData.city}
+                    onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                     className="w-full mt-1 border-b-2 border-gray-100 focus:border-emerald-500 outline-none py-2 text-sm"
-                    placeholder="Auto-filled"
+                    placeholder="City"
                   />
                 </div>
               </div>
               <div>
-                <label className="text-xs font-bold text-gray-500">Full Name *</label>
-                <input
-                  value={address.name}
-                  onChange={(e) => setAddress({ ...address, name: e.target.value })}
-                  className="w-full mt-1 border-b-2 border-gray-100 focus:border-emerald-500 outline-none py-2 text-sm font-bold"
-                  placeholder="John Doe"
-                />
-              </div>
-              <div>
                 <label className="text-xs font-bold text-gray-500">Address / Street *</label>
                 <textarea
-                  value={address.street}
-                  onChange={(e) => setAddress({ ...address, street: e.target.value })}
+                  value={formData.street}
+                  onChange={(e) => setFormData({ ...formData, street: e.target.value })}
                   rows={2}
                   className="w-full mt-1 border-b-2 border-gray-100 focus:border-emerald-500 outline-none py-2 text-sm resize-none"
                   placeholder="House No, Building, Street Area"
                 />
               </div>
-              <button type="submit" className="w-full mt-2 bg-emerald-900 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-200 hover:bg-emerald-800 transition-all">
+              <button type="submit" className="w-full mt-2 bg-emerald-900 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-200 hover:bg-emerald-800 active:scale-[0.98] transition-all">
                 PROCEED TO PAY
               </button>
+              <p className="mt-3 text-xs text-center text-gray-400">
+                By continuing, you agree to our Terms of Service & Privacy Policy
+              </p>
             </form>
           )}
         </div>
 
-        {/* STEP 3: PAYMENT */}
-        <div className={`transition-all duration-300 ${step !== 3 ? 'opacity-40 pointer-events-none' : ''}`}>
+        {/* STEP 2: PAYMENT */}
+        <div className={`transition-all duration-300 ${step !== 2 ? 'opacity-40 pointer-events-none' : ''}`}>
           <h3 className="flex items-center gap-2 font-bold text-gray-800 mb-3">
-            <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${step >= 3 ? 'bg-emerald-900 text-white' : 'bg-gray-200'}`}>3</span>
+            <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${step >= 2 ? 'bg-emerald-900 text-white' : 'bg-gray-200'}`}>2</span>
             Payment
           </h3>
 
-          {step === 3 && (
+          {step === 2 && (
             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden animate-in fade-in slide-in-from-bottom-4">
 
-              {/* UPI Option */}
-              <label className={`flex items-center gap-4 p-4 border-b border-gray-100 cursor-pointer transition-colors ${paymentMethod === 'upi' ? 'bg-emerald-50/50' : 'hover:bg-gray-50'}`}>
+              <label className={`flex items-center gap-4 p-4 sm:p-5 border-b border-gray-100 cursor-pointer transition-colors min-h-[60px] ${paymentMethod === 'upi' ? 'bg-emerald-50/50' : 'hover:bg-gray-50'}`}>
                 <input
                   type="radio"
                   name="payment"
                   checked={paymentMethod === 'upi'}
                   onChange={() => setPaymentMethod('upi')}
-                  className="w-5 h-5 accent-emerald-600"
+                  className="w-6 h-6 accent-emerald-600 shrink-0"
                 />
                 <div className="flex-1">
-                  <p className="font-bold text-gray-800 flex items-center gap-2">UPI (GPay / PhonePe) <span className="bg-green-100 text-green-700 text-[9px] px-1.5 rounded font-bold uppercase">Fastest</span></p>
-                  <p className="text-xs text-gray-500">Pay directly from your bank account</p>
+                  <p className="font-bold text-gray-800 flex items-center gap-2 text-sm sm:text-base">UPI (GPay / PhonePe) <span className="bg-green-100 text-green-700 text-[10px] px-1.5 py-0.5 rounded font-bold uppercase">Fastest</span></p>
+                  <p className="text-xs sm:text-sm text-gray-500">Pay directly from your bank account</p>
                 </div>
-                <div className="w-8 h-8 rounded-full bg-white border border-gray-200 p-1">
-                  <img src="https://cdn-icons-png.flaticon.com/512/2704/2704332.png" alt="UPI" className="w-full h-full object-contain" />
+                <div className="w-9 h-9 rounded-full bg-white border border-gray-200 p-1 shrink-0">
+                  <img src="/upi-icon.png" alt="UPI" className="w-full h-full object-contain" />
                 </div>
               </label>
 
-              {/* COD Option */}
-              <label className={`flex items-center gap-4 p-4 cursor-pointer transition-colors ${paymentMethod === 'cod' ? 'bg-emerald-50/50' : 'hover:bg-gray-50'}`}>
+              <label className={`flex items-center gap-4 p-4 sm:p-5 cursor-pointer transition-colors min-h-[60px] ${paymentMethod === 'cod' ? 'bg-emerald-50/50' : 'hover:bg-gray-50'}`}>
                 <input
                   type="radio"
                   name="payment"
                   checked={paymentMethod === 'cod'}
                   onChange={() => setPaymentMethod('cod')}
-                  className="w-5 h-5 accent-emerald-600"
+                  className="w-6 h-6 accent-emerald-600 shrink-0"
                 />
                 <div className="flex-1">
-                  <p className="font-bold text-gray-800">Cash on Delivery</p>
-                  <p className="text-xs text-gray-500">Pay with cash upon delivery</p>
+                  <p className="font-bold text-gray-800 text-sm sm:text-base">Cash on Delivery</p>
+                  <p className="text-xs sm:text-sm text-gray-500">Pay with cash upon delivery</p>
                 </div>
-                <div className="w-8 h-8 rounded-full bg-white border border-gray-200 p-1 flex items-center justify-center text-emerald-800">
-                  <Banknote size={16} />
+                <div className="w-9 h-9 rounded-full bg-white border border-gray-200 p-1 flex items-center justify-center text-emerald-800 shrink-0">
+                  <Banknote size={18} />
                 </div>
               </label>
 
               {/* Pay Button */}
               <div className="p-4 bg-gray-50 border-t border-gray-100">
-                <button onClick={handlePayment} className="w-full bg-emerald-900 text-white font-bold py-4 rounded-xl shadow-lg shadow-emerald-200 hover:bg-emerald-800 hover:-translate-y-0.5 transition-all flex justify-between items-center px-6">
-                  <span>PAY ₹{cartTotal}</span>
-                  <span className="flex items-center gap-2 text-xs font-normal opacity-80"><Lock size={12} /> SSL Encrypted</span>
+                <button onClick={handlePayment} className="w-full bg-emerald-900 text-white font-bold py-4 rounded-xl shadow-lg shadow-emerald-200 hover:bg-emerald-800 hover:-translate-y-0.5 active:scale-[0.98] transition-all flex justify-between items-center px-6 min-h-[52px]">
+                  <span className="text-sm sm:text-base">PAY ₹{cartTotal}</span>
+                  <span className="flex items-center gap-2 text-xs font-normal opacity-80"><Lock size={14} /> SSL Encrypted</span>
                 </button>
               </div>
             </div>
           )}
         </div>
 
-      </div>
+      </PageFadeLayout>
 
-      {/* FOOTER BADGES */}
-      <div className="max-w-md mx-auto mt-8 flex justify-center gap-6 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Stripe_Logo%2C_revised_2016.svg/2560px-Stripe_Logo%2C_revised_2016.svg.png" className="h-6 object-contain" alt="Stripe" />
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Google_Pay_Logo.svg/1024px-Google_Pay_Logo.svg.png" className="h-6 object-contain" alt="GPay" />
-        <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png" className="h-6 object-contain" alt="Visa" />
-      </div>
+      <p className="text-center mt-8 text-sm text-gray-500 px-4">Secure payment via UPI & COD</p>
 
     </div>
   );

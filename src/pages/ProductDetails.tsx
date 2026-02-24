@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { products } from '../data/products';
 import { useShop } from '../context/ShopContext';
@@ -6,41 +6,52 @@ import {
     Star, Minus, Plus, ShoppingBag, Check, ShieldCheck,
     Leaf, Award, UserCheck,
     ChevronDown, Share2, Heart as HeartIcon,
-    Activity, Sparkles, Truck, ArrowRight, Gift, CheckCircle2, ChevronRight
+    Activity, Sparkles, Truck, ArrowRight, CheckCircle2, ChevronRight, ChevronLeft
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
 import { SEO } from '../components/SEO';
+import { toSlug } from '../utils/slug';
+import { WhatsAppIcon } from '../components/WhatsAppFloat';
+import { WHATSAPP_CONFIG } from '../config';
+
+const INGREDIENTS_BY_CATEGORY: Record<string, string[]> = {
+    'Joint & Muscle Pain': ['Shallaki', 'Nirgundi', 'Ginger', 'Turmeric', 'Eucalyptus'],
+    'Diabetes Care': ['Karela', 'Giloy', 'Jamun', 'Methi', 'Neem', 'Turmeric'],
+    'Digestive Health': ['Hing', 'Jeera', 'Ajwain', 'Triphala', 'Ginger', 'Amla'],
+    "Women's Wellness": ['Ashoka', 'Lodhra', 'Shatavari', 'Ashwagandha', 'Lodra'],
+    'Urinary Care': ['Gokshura', 'Varuna', 'Punarnava', 'Pashanbhed', 'Kaasni'],
+};
+const DEFAULT_INGREDIENTS = ['Ashwagandha', 'Turmeric', 'Giloy', 'Amla', 'Tulsi', 'Neem'];
+
+const PRODUCT_FAQ = [
+    { q: "Which Ayurvedic product is best for this concern?", a: "We recommend consulting our FREE expert consultation for personalised advice based on your health profile." },
+    { q: "Do Ayurvedic products help with long-term wellness?", a: "Yes. Ayurveda focuses on root-cause healing. Consistent use for 2–3 months typically yields best results." },
+    { q: "Are there any side effects?", a: "Our formulations are 100% natural. However, please consult a practitioner if you have allergies or are on prescription medication." },
+    { q: "What is the recommended dosage?", a: "Dosage varies by product. Check the 'How to Use' tab or consult our experts for personalised guidance." },
+];
 
 export const ProductDetails = () => {
-    const { id } = useParams();
+    const { slug } = useParams();
     const navigate = useNavigate();
     const { addToCart } = useShop();
 
-    // Derived State
-    const product = products.find(p => p.id === Number(id));
+    const product = products.find(p => toSlug(p.name) === slug);
 
-    // Local UI State
     const [activeImage, setActiveImage] = useState('');
-    const [prevId, setPrevId] = useState<string | undefined>(undefined);
-
-    // Reset image when product changes (State Adjustment during Render)
-    if (id !== prevId) {
-        setPrevId(id);
-        if (product) setActiveImage(product.image);
-    }
-
-
     const [quantity, setQuantity] = useState(1);
-    const [selectedPack, setSelectedPack] = useState(1); // 1 = Pack of 1, 2 = Pack of 2, etc.
-    const [activeTab, setActiveTab] = useState('description');
+    const [selectedPack, setSelectedPack] = useState(1);
+    const [activeTab, setActiveTab] = useState('Description');
+    const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
+    const tabsSectionRef = useRef<HTMLDivElement>(null);
 
-    // Scroll to top & Redirect if not found
+    useEffect(() => {
+        if (product) setActiveImage(product.image);
+    }, [slug, product]);
+
     useEffect(() => {
         window.scrollTo(0, 0);
-        if (!product) {
-            navigate('/shop');
-        }
+        if (!product) navigate('/shop');
     }, [product, navigate]);
 
     if (!product) return null;
@@ -86,9 +97,36 @@ export const ProductDetails = () => {
         toast.success(`Added ${quantity} x ${currentPack.label} to Cart!`);
     };
 
+    const handleWhatsAppOrder = () => {
+        if (quantity < 1) return;
+        const totalPrice = price * quantity;
+        // Pre-fill message so customer just hits send on WhatsApp
+        const message = [
+            `Namaste AyurVita team! 🙏`,
+            `Mujhe yeh order chahiye:`,
+            ``,
+            `📦 Product: ${product.name}`,
+            `📏 Size/Pack: ${currentPack.label} - ${product.type}`,
+            `🔢 Quantity: ${quantity}`,
+            `💰 Price: ₹${totalPrice} (${discountPercentage}% off)`,
+            ``,
+            `Prefer COD`,
+            `Delivery Address:`,
+            `City/Pincode:`,
+            ``,
+            `Please confirm kar dijiye! 🚀`,
+        ].join('\n');
+
+        window.open(
+            `https://wa.me/${WHATSAPP_CONFIG.number}?text=${encodeURIComponent(message)}`,
+            '_blank'
+        );
+        toast.success('WhatsApp खोला गया। अब ऑर्डर भेजें।');
+    };
+
     const handleBuyNow = () => {
         handleAddToCart();
-        navigate('/cart');
+        navigate('/checkout');
     };
 
     return (
@@ -99,9 +137,18 @@ export const ProductDetails = () => {
                 image={product.image}
             />
 
-            {/* BREADCRUMB area could go here */}
+            <div className="max-w-7xl mx-auto px-4 pt-4 lg:pt-6">
+                <button
+                    onClick={() => navigate(-1)}
+                    className="flex items-center gap-1.5 text-stone-500 hover:text-emerald-700 text-sm font-medium transition-colors -ml-1 p-2 rounded-lg hover:bg-stone-50 min-h-[44px] min-w-[44px]"
+                    aria-label="Go back"
+                >
+                    <ChevronLeft size={20} />
+                    <span className="hidden sm:inline">Back</span>
+                </button>
+            </div>
 
-            <div className="max-w-7xl mx-auto px-4 py-6 lg:py-10 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+            <div className="max-w-7xl mx-auto px-4 py-4 lg:py-10 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
 
                 {/* LEFT COLUMN: Gallery */}
                 <div className="space-y-4 select-none">
@@ -112,7 +159,7 @@ export const ProductDetails = () => {
                                 <button
                                     key={idx}
                                     onMouseEnter={() => setActiveImage(img)}
-                                    className={`border-2 rounded-xl overflow-hidden w-20 h-20 flex-shrink-0 transition-all cursor-pointer ${activeImage === img ? 'border-emerald-600 ring-2 ring-emerald-100 opacity-100' : 'border-stone-100 opacity-70 hover:opacity-100 hover:border-emerald-200'}`}
+                                    className={`border-2 rounded-xl overflow-hidden w-20 h-20 flex-shrink-0 transition-all duration-200 cursor-pointer ${activeImage === img ? 'border-emerald-600 ring-2 ring-emerald-100 opacity-100' : 'border-stone-100 opacity-70 hover:opacity-100 hover:border-emerald-200'}`}
                                 >
                                     <img
                                         src={img}
@@ -172,7 +219,7 @@ export const ProductDetails = () => {
                         </p>
 
                         <div className="flex flex-wrap gap-2 mb-4">
-                            {["Weight Loss", "Tasty Drink", "Curbs Cravings", "Improves Gut Health"].map((tag, i) => (
+                            {(product.tags?.length ? product.tags : [product.category, product.form].filter(Boolean)).slice(0, 4).map((tag, i) => (
                                 <span key={i} className={`text-[10px] font-bold px-2 py-1 rounded-sm uppercase tracking-wide border ${i === 1 ? 'bg-amber-200 text-amber-900 border-amber-300' : i === 2 ? 'bg-blue-200 text-blue-900 border-blue-300' : 'bg-green-100 text-green-800 border-green-200'}`}>
                                     {tag}
                                 </span>
@@ -198,12 +245,6 @@ export const ProductDetails = () => {
                                 {discountPercentage}% OFF
                             </span>
                             <span className="text-[10px] text-stone-500 italic block w-full mt-1">(Inclusive of all taxes)</span>
-                        </div>
-
-                        {/* FREE GIFT BANNER */}
-                        <div className="bg-emerald-800 text-white text-xs font-bold px-4 py-3 rounded-md flex items-center gap-2 mb-6">
-                            <Gift size={16} className="animate-pulse" />
-                            FREE Shilajit Lozenges worth ₹599 on orders above ₹1149
                         </div>
 
                         <div className="space-y-4 mb-8">
@@ -274,6 +315,15 @@ export const ProductDetails = () => {
                             </button>
                         </div>
 
+                        <button
+                            onClick={handleWhatsAppOrder}
+                            aria-label="Order this product on WhatsApp"
+                            className="w-full bg-green-600 hover:bg-green-700 text-white py-4 px-8 text-lg font-bold rounded-lg shadow-md flex items-center justify-center gap-3 transition-colors active:scale-[0.98]"
+                        >
+                            <WhatsAppIcon size={24} />
+                            Order on WhatsApp - ₹{price * quantity}
+                        </button>
+
                         {/* Benefits Icons Grid (Mobile Style Clone) */}
                         <div className="bg-emerald-50/50 rounded-xl p-4 border border-emerald-100 mb-8">
                             <div className="grid grid-cols-2 gap-4">
@@ -316,13 +366,10 @@ export const ProductDetails = () => {
                             </div>
                         </div>
 
-                        {/* Delivery Checker (Simplified) */}
-                        <div className="border border-stone-200 rounded-lg p-4 flex items-center justify-between mb-8 cursor-pointer hover:bg-stone-50">
-                            <div className="flex items-center gap-3">
-                                <Truck size={20} className="text-stone-400" />
-                                <span className="text-sm font-bold text-stone-600">Check delivery date</span>
-                            </div>
-                            <ChevronRight size={16} className="text-stone-400" />
+                        {/* Delivery Info */}
+                        <div className="border border-stone-200 rounded-lg p-4 flex items-center gap-3 mb-8">
+                            <Truck size={20} className="text-stone-400 shrink-0" />
+                            <span className="text-sm font-bold text-stone-600">All-India delivery</span>
                         </div>
                     </div>
                 </div>
@@ -343,7 +390,10 @@ export const ProductDetails = () => {
                         <p className="text-lg text-emerald-50 mb-8 leading-relaxed drop-shadow-md">
                             Experience the ancient wisdom of Ayurveda, reformulated for your busy lifestyle. 100% natural, effective, and safe.
                         </p>
-                        <button className="bg-white text-emerald-900 px-8 py-3 rounded-full font-bold hover:bg-emerald-50 w-fit transition-transform transform hover:scale-105 flex items-center gap-2">
+                        <button
+                            onClick={() => { setActiveTab('Description'); tabsSectionRef.current?.scrollIntoView({ behavior: 'smooth' }); }}
+                            className="bg-white text-emerald-900 px-8 py-3 rounded-full font-bold hover:bg-emerald-50 w-fit transition-transform transform hover:scale-105 flex items-center gap-2"
+                        >
                             Explore Benefits <ArrowRight size={18} />
                         </button>
                     </div>
@@ -351,7 +401,7 @@ export const ProductDetails = () => {
             )}
 
             {/* TABS SECTION */}
-            <div className="max-w-7xl mx-auto px-4 mb-16">
+            <div ref={tabsSectionRef} className="max-w-7xl mx-auto px-4 mb-16 scroll-mt-24">
                 <div className="flex border-b border-stone-200 mb-8 overflow-x-auto hide-scrollbar">
                     {['Description', 'Key Ingredients', 'How to Use', 'Product Details'].map((tab) => (
                         <button
@@ -380,7 +430,7 @@ export const ProductDetails = () => {
                                 <p className="text-stone-600 leading-relaxed text-lg">
                                     {product.description}
                                 </p>
-                                <h4 className="font-bold text-emerald-900 mt-6 mb-4">Why choose Ayurvita?</h4>
+                                <h4 className="font-bold text-emerald-900 mt-6 mb-4">Why choose AyurVita?</h4>
                                 <ul className="grid sm:grid-cols-2 gap-4 list-none pl-0">
                                     {product.benefits.map((benefit, i) => (
                                         <li key={i} className="flex items-center gap-3">
@@ -398,7 +448,7 @@ export const ProductDetails = () => {
                             <div className="animate-fadeIn">
                                 <h3 className="text-xl font-bold text-emerald-900 mb-4">Key Herbal Ingredients</h3>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                                    {['Ashwagandha', 'Turmeric', 'Gilloy', 'Amla', 'Tulsi', 'Neem'].map((herb, i) => (
+                                    {(INGREDIENTS_BY_CATEGORY[product.category] ?? DEFAULT_INGREDIENTS).map((herb, i) => (
                                         <div key={i} className="flex items-center gap-3 p-3 border border-stone-100 rounded-lg hover:shadow-md transition-all">
                                             <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold text-xs">{herb[0]}</div>
                                             <div>
@@ -495,23 +545,25 @@ export const ProductDetails = () => {
                 </div>
             </div>
 
-            {/* FAQ SECTION (Screenshot 5) */}
+            {/* FAQ SECTION */}
             <div className="max-w-4xl mx-auto px-4 mb-20">
                 <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-900 mb-8">Frequently Asked Questions</h2>
                 <div className="space-y-4">
-                    {[
-                        "Which Ayurvedic Fitness product is best for weight loss?",
-                        "Do Ayurvedic Fitness products help you in losing weight?",
-                        "Does Triphala herb burn fat?",
-                        "Are there any side effects associated with using Ayurvedic fitness products?",
-                        "Are there any age restrictions for using the weight management products?"
-                    ].map((question, i) => (
+                    {PRODUCT_FAQ.map((item, i) => (
                         <div key={i} className="border border-emerald-100 rounded-lg bg-emerald-50/30 overflow-hidden">
-                            <button className="w-full flex items-center justify-between p-4 text-left font-bold text-emerald-900 hover:bg-emerald-50 transition-colors">
-                                <span>{question}</span>
-                                <ChevronDown size={20} className="text-emerald-600" />
+                            <button
+                                onClick={() => setOpenFaqIndex(openFaqIndex === i ? null : i)}
+                                className="w-full flex items-center justify-between p-4 text-left font-bold text-emerald-900 hover:bg-emerald-50 transition-colors min-h-[52px]"
+                                aria-expanded={openFaqIndex === i}
+                            >
+                                <span className="pr-4">{item.q}</span>
+                                <ChevronDown size={20} className={`text-emerald-600 shrink-0 transition-transform ${openFaqIndex === i ? 'rotate-180' : ''}`} />
                             </button>
-                            {/* Static Open State for Demo (first one could be open, or use state if requested. Assuming closed for now or simple list) */}
+                            {openFaqIndex === i && (
+                                <div className="px-4 pb-4 pt-0">
+                                    <p className="text-sm text-stone-600 leading-relaxed">{item.a}</p>
+                                </div>
+                            )}
                         </div>
                     ))}
                 </div>
@@ -529,7 +581,9 @@ export const ProductDetails = () => {
                             <h4 className="font-bold text-gray-900 mb-1 line-clamp-1">{recProduct.name}</h4>
                             <div className="flex items-center gap-2 mb-3">
                                 <span className="font-bold text-emerald-800">₹{recProduct.price}</span>
+                                {recProduct.originalPrice != null && (
                                 <span className="text-xs text-gray-400 line-through">₹{recProduct.originalPrice}</span>
+                            )}
                             </div>
                             <button
                                 onClick={() => { addToCart(recProduct, 1); toast.success('Added to bundle!'); }}
@@ -547,7 +601,7 @@ export const ProductDetails = () => {
                 <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-900 mb-8">New Launches</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
                     {products.slice(4, 8).map(p => (
-                        <div key={p.id} onClick={() => navigate(`/product/${p.id}`)} className="bg-white rounded-xl border border-stone-100 p-4 shadow-sm hover:shadow-xl transition-all cursor-pointer group">
+                        <div key={p.id} onClick={() => navigate(`/product/${toSlug(p.name)}`)} className="bg-white rounded-xl border border-stone-100 p-4 shadow-sm hover:shadow-xl transition-all cursor-pointer group">
                             <div className="h-48 bg-stone-50 rounded-lg mb-4 flex items-center justify-center relative overflow-hidden">
                                 <span className="absolute top-2 left-2 bg-emerald-600 text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">New</span>
                                 <img src={p.image} alt={p.name} className="max-h-full p-4 object-contain transition-transform duration-500 group-hover:scale-110" />
@@ -611,14 +665,21 @@ export const ProductDetails = () => {
             </div>
 
             {/* STICKY BOTTOM BAR (Mobile) */}
-            <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 z-50 shadow-[0_-5px_20px_rgba(0,0,0,0.1)] flex items-center justify-between gap-4">
-                <div className="flex flex-col">
+            <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 z-50 shadow-[0_-5px_20px_rgba(0,0,0,0.1)] flex items-center justify-between gap-3 transition-transform duration-300">
+                <div className="flex flex-col min-w-0">
                     <span className="text-xs text-gray-500 font-medium">{currentPack.label}</span>
                     <div className="flex items-center gap-2">
                         <span className="text-xl font-bold text-gray-900">₹{price * quantity}</span>
                         <span className="text-xs text-gray-400 line-through">₹{originalPrice * quantity}</span>
                     </div>
                 </div>
+                <button
+                    onClick={handleWhatsAppOrder}
+                    aria-label="Order this product on WhatsApp"
+                    className="w-12 h-12 bg-green-600 hover:bg-green-700 text-white rounded-lg shadow-md flex items-center justify-center shrink-0 active:scale-95 transition-transform"
+                >
+                    <WhatsAppIcon size={22} />
+                </button>
                 <button
                     onClick={handleBuyNow}
                     className="flex-1 bg-emerald-800 text-white font-bold text-sm py-3 rounded-lg shadow-md active:scale-95 transition-transform"

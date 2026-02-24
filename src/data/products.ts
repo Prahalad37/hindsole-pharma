@@ -17,7 +17,8 @@ export const products: Product[] = [
     description: "A therapeutic Ayurvedic oil for effective relief from joint pain, stiffness, and muscular discomfort.",
     benefits: ["Reduces joint pain & stiffness", "Relieves muscular spasm", "Improves mobility & flexibility"],
     indications: "Arthritis & rheumatism, Back pain, sprains & sports injuries, Muscular pain & stiffness",
-    dosage: "Apply externally as directed"
+    dosage: "Apply externally as directed",
+    tags: ["Fitness", "Pain Management"]
   },
 
   // 2. Gasovita Syrup
@@ -36,7 +37,8 @@ export const products: Product[] = [
     description: "A digestive tonic made with traditional herbs that act as carminatives, improve digestion, and relieve nausea.",
     benefits: ["Improves appetite & digestion", "Relieves nausea, bloating & gas", "Reduces acidity & indigestion"],
     indications: "Indigestion & acidity, Bloating, flatulence, Loss of appetite",
-    dosage: "5–10 ml, 2–3 times daily"
+    dosage: "5–10 ml, 2–3 times daily",
+    tags: ["Digestive Care", "Immunity"]
   },
 
   // 3. Gynevita Tonic
@@ -55,7 +57,8 @@ export const products: Product[] = [
     description: "An Ayurvedic formulation enriched with powerful herbs for complete gynecological wellness. Supports hormonal balance and overall female health.",
     benefits: ["Regulates menstrual cycle", "Reduces leucorrhoea & menorrhagia", "Improves fertility & reproductive health", "Relieves weakness & fatigue"],
     indications: "Menstrual irregularities, Leucorrhoea, Amenorrhoea, Habitual abortion, General rundown conditions",
-    dosage: "5–10 ml, 2–3 times daily or as directed"
+    dosage: "5–10 ml, 2–3 times daily or as directed",
+    tags: ["Womens Health"]
   },
 
   // 4. Varunalka Syrup
@@ -74,7 +77,8 @@ export const products: Product[] = [
     description: "A coolant for the urinary tract, providing relief from burning urination, cystitis, and recurrent UTIs.",
     benefits: ["Relieves painful urination", "Prevents recurrent infections", "Supports kidney & bladder health"],
     indications: "Burning micturition, Cystitis & UTIs, Blood in urine",
-    dosage: "5–10 ml, 2–3 times daily"
+    dosage: "5–10 ml, 2–3 times daily",
+    tags: ["Liver Care"]
   },
 
   // 5. Gasovita Powder
@@ -89,11 +93,12 @@ export const products: Product[] = [
     rating: 4.6,
     reviews: 85,
     image: "/products/gasovita_powder_catalog.jpg",
-    poster: "/products/gasovitapowder_poster.jpg",
+    poster: "/products/gasovita_powder_catalog.jpg",
     description: "A traditional herbal formulation that reduces gas, bloating, and acidity while supporting overall digestion.",
     benefits: ["Relieves flatulence & indigestion", "Reduces acidity & heaviness", "Improves digestive strength"],
     indications: "Gas & acidity, Bloating & indigestion",
-    dosage: "1–2 g or as directed"
+    dosage: "1–2 g or as directed",
+    tags: ["Digestive Care", "Piles Care"]
   },
 
   // 6. Diabvita Powder
@@ -112,7 +117,8 @@ export const products: Product[] = [
     description: "A natural Ayurvedic powder that helps control blood sugar levels, boosts insulin function, and improves metabolism.",
     benefits: ["Regulates blood sugar naturally", "Enhances insulin secretion", "Improves digestion & metabolism", "Provides long-term glycemic support"],
     indications: "Diabetes management, High blood sugar, Weak metabolism",
-    dosage: "As directed by physician"
+    dosage: "As directed by physician",
+    tags: ["Diabetes"]
   },
 
   // 7. Mayoplex Syrup
@@ -131,7 +137,8 @@ export const products: Product[] = [
     description: "A natural syrup for joint pain, arthritis, and muscular spasms, supporting bone and muscle strength.",
     benefits: ["Relieves joint & muscle pain", "Reduces inflammation & stiffness", "Improves mobility & flexibility"],
     indications: "Arthritis & spondylitis, Neuralgia & muscular spasm, Sports injuries & stiffness",
-    dosage: "As directed by physician"
+    dosage: "As directed by physician",
+    tags: ["Fitness", "Pain Management"]
   },
 
   // 8. Arthovita Tablets
@@ -150,7 +157,8 @@ export const products: Product[] = [
     description: "Advanced Ayurvedic tablets for rheumatism, joints, and neuro-muscular pain. Reduces arthritis and supports bone strength.",
     benefits: ["Reduces arthritis & neuro-muscular pain", "Supports bone strength & flexibility", "Relieves stiffness & inflammation"],
     indications: "Rheumatism, Joints & Neuro Pain",
-    dosage: "2 tablets twice daily with warm water or as directed"
+    dosage: "2 tablets twice daily with warm water or as directed",
+    tags: ["Fitness", "Pain Management"]
   },
 
   // 9. Arthovedh
@@ -169,7 +177,8 @@ export const products: Product[] = [
     description: "Ayurvedic formulation for rheumatism, joints, and muscle pain. Strengthens muscles and improves mobility.",
     benefits: ["Relieves joint pain, stiffness & swelling", "Effective in rheumatism, sciatica & gout", "Strengthens muscles & improves mobility"],
     indications: "Rheumatism, Joints & Muscle Pain",
-    dosage: "As directed by physician"
+    dosage: "As directed by physician",
+    tags: ["Fitness", "Pain Management"]
   },
 
   // 10. Diabvita Tablets
@@ -188,7 +197,8 @@ export const products: Product[] = [
     description: "Daily tablets for maintaining healthy blood sugar levels naturally.",
     benefits: ["Regulates blood sugar", "Enhances insulin secretion", "Long-term glycemic support"],
     indications: "Diabetes, high blood sugar",
-    dosage: "As directed by physician"
+    dosage: "As directed by physician",
+    tags: ["Diabetes"]
   },
 
   // 11. Stonevita Syrup (Kidney Stone)
@@ -207,7 +217,8 @@ export const products: Product[] = [
     description: "Effective Ayurvedic syrup for dissolving kidney stones and preventing recurrence. Soothes urinary tract inflammation.",
     benefits: ["Helps dissolve kidney stones", "Relieves burning micturition", "Prevents UTI recurrence"],
     indications: "Renal calculi, UTI, Burning urination",
-    dosage: "10 ml twice daily with water"
+    dosage: "10 ml twice daily with water",
+    tags: ["Liver Care"]
   },
 
   // 12. Livovita DS (Liver Care)
@@ -226,7 +237,8 @@ export const products: Product[] = [
     description: "Double strength liver protector. Regenerates liver cells and improves appetite and digestion.",
     benefits: ["Protects liver from toxins", "Improves appetite & digestion", "Useful in fatty liver"],
     indications: "Jaundice, Fatty Liver, Loss of Appetite",
-    dosage: "1 tablet twice daily"
+    dosage: "1 tablet twice daily",
+    tags: ["Liver Care", "Digestive Care"]
   },
 
   // 13. Pilovita Capsules (Piles Care)
@@ -245,7 +257,8 @@ export const products: Product[] = [
     description: "Herbal relief for piles and fissures. Reduces bleeding, pain, and inflammation naturally.",
     benefits: ["Stops rectal bleeding", "Relieves pain & itching", "Promotes smooth evacuation"],
     indications: "Piles, Fissures, Fistula",
-    dosage: "1-2 capsules at bedtime"
+    dosage: "1-2 capsules at bedtime",
+    tags: ["Piles Care", "Digestive Care"]
   },
 
   // 14. Keshvita Hair Oil (Hair Care)
@@ -264,7 +277,8 @@ export const products: Product[] = [
     description: "Enriched with Bhringraj and Amla. Reduces hair fall, promotes new growth, and prevents premature graying.",
     benefits: ["Controls hair fall", "Promotes hair regrowth", "Prevents dandruff & graying"],
     indications: "Hair fall, Dandruff, Alopecia",
-    dosage: "Massage on scalp/hair at night"
+    dosage: "Massage on scalp/hair at night",
+    tags: ["Womens Health"]
   },
 
   // 15. Immunovita Chyawanprash (Immunity)
@@ -283,7 +297,8 @@ export const products: Product[] = [
     description: "Traditional formulation with 40+ herbs. Boosts immunity, energy, and respiratory health.",
     benefits: ["Boosts immunity", "Improves respiratory health", "Increases stamina"],
     indications: "Low immunity, seasonal cold/cough",
-    dosage: "1 tsp daily with milk"
+    dosage: "1 tsp daily with milk",
+    tags: ["Immunity", "Fitness"]
   },
 
   // 16. Kofvita Syrup (Cough Relief)
@@ -302,7 +317,8 @@ export const products: Product[] = [
     description: "Non-drowsy herbal formula for dry and wet cough. Soothes sore throat instantly.",
     benefits: ["Relieves dry & wet cough", "Soothes sore throat", "Non-drowsy formula"],
     indications: "Cough, Cold, Sore Throat",
-    dosage: "10 ml thrice daily"
+    dosage: "10 ml thrice daily",
+    tags: ["Immunity"]
   },
 
   // 17. Stresscom Ashwagandha (Stress Relief)
@@ -321,7 +337,8 @@ export const products: Product[] = [
     description: "Pure Ashwagandha extract. Reduces stress, anxiety, and improves sleep quality.",
     benefits: ["Reduces stress & anxiety", "Improves sleep quality", "Boosts vitality"],
     indications: "Stress, Insomnia, Fatigue",
-    dosage: "1 capsule twice daily"
+    dosage: "1 capsule twice daily",
+    tags: ["Sexual Wellness", "Immunity", "Fitness"]
   },
 
   // 18. Massvita Gainer (Weight Gain)
@@ -340,6 +357,7 @@ export const products: Product[] = [
     description: "Herbal weight gainer for building muscle mass and strength naturally.",
     benefits: ["Healthy weight gain", "Builds muscle mass", "Improves appetite"],
     indications: "Underweight, Muscle weakness",
-    dosage: "2 tsp with milk daily"
+    dosage: "2 tsp with milk daily",
+    tags: ["Fitness", "Sexual Wellness"]
   }
 ];
